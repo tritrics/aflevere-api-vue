@@ -6,5 +6,5 @@ This is pre-release for test purposes. Release with documentation is planned for
 
 ## Author
 
-Michael Adams
+Michael Adams  
 ma@tritrics.com
