@@ -7,7 +7,7 @@ export const VERSION = version
 
 /**
  * Default options are defined on initialisation by createApi() or separately 
- * by setOptions(). Default Options are used for every request.
+ * by defineConfig(). Default Options are used for every request.
  * 
  * Default options can be optionally overwritten for a single request in three ways:
  * 1. getNode(node, {Object} options)
@@ -19,7 +19,7 @@ let defaultOptions = new Options()
 /**
  * Create default options
  */
-export function setOptions(options, reset = false) {
+export function defineConfig(options, reset = false) {
   defaultOptions = reset ? new Options(options) : defaultOptions.clone(options)
 }
 
@@ -64,12 +64,12 @@ export async function call(node, data) {
  */
 export function createApi(_options) {
   if (isObj(_options)) {
-    setOptions(_options)
+    defineConfig(_options)
   }
   return {
     install(app) {
       app.config.globalProperties.$api = {
-        setOptions,
+        defineConfig,
         createRequest,
         getLanguages,
         getCollection,

@@ -7,7 +7,7 @@ const parserOptions = new Options()
 /**
  * Create or change default options
  */
-export function setOptions() {
+export function defineConfig() {
   parserOptions.set(...arguments)
 }
 
@@ -22,7 +22,7 @@ export function getOption() {
  */
 export function createParser(_options) {
   if (isObj(_options)) {
-    setOptions(_options)
+    defineConfig(_options)
   }
   return (json) => {
     return new Parser().get(json)
