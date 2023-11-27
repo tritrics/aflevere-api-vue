@@ -1,10 +1,10 @@
-# AfleverAPI Vue Plugin
+# AfleverAPI Plugin for Vue.js
 
-Plugin to use Kirby as content backend for Vue.js. The plugin reflects the API methods of the AfleverAPI Kirby Plugin and fetches data easily.
+A Vue.js plugin, that is build to use the Kirby CMS as a data backend. The plugin reflects the api methods of the [AfleverAPI Plugin for Kirby](https://github.com/tritrics/aflever-api-kirby) and fetches data easily.
 
-This is pre-release for test purposes. Release with documentation is planned for 3/2024.
+This is pre-release for test purposes. Documentation is coming later.
 
 ## Author
 
 Michael Adams  
-ma@tritrics.com
+E-Mail: [ma@tritrics.dk](mailto:ma@tritrics.dk)
