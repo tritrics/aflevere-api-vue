@@ -1,4 +1,4 @@
-import { each, has, isArr, isBool, isFunc, isInt, isObj, isStr, toStr, toBool } from '../fnlib'
+import { each, has, lower, isArr, isBool, isFunc, isInt, isObj, isStr, toStr, toBool } from '../fnlib'
 
 const Options = class {
   host = null
@@ -68,13 +68,21 @@ const Options = class {
   }
 
   setFields(...val) {
-    if (val.length === 1 && toBool(val[0]) === true) {
-      this.fields = 'all'
-      return
+    let fields = []
+    if (val.length === 1) {
+      if (toBool(val[0]) === true) {
+        this.fields = 'all'
+        return
+      } else if (isArr(val[0])) {
+        fields = val[0]
+      } else if (isStr(val[0])) {
+        fields = val[0].split(',')
+      }
+    } else {
+      fields = val
     }
-    let fields = (val.length === 1 && isArr(val[0])) ? val[0] : val
-    fields = fields.filter((field) => typeof field === 'string' && field.length > 0)
-    this.fields = fields.map((field) => field.toLowerCase())
+    fields = fields.filter((field) => isStr(field, 1))
+    this.fields = fields.map((field) => lower(field))
   }
 
   setLimit(val) {
