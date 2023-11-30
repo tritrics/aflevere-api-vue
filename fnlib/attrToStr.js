@@ -1,6 +1,7 @@
 import each from './each'
 import isObj from './isObj'
 import isStr from './isStr'
+import isNum from './isNum'
 import addSlashes from './addSlashes'
 
 export default function attrToStr() {
@@ -13,7 +14,7 @@ export default function attrToStr() {
   const start = []
   const end = []
   each(attr, (value, key) => {
-    if (isStr(value)) {
+    if (isStr(value) || isNum(value)) {
       const attr = `${key}="${addSlashes(value)}"`
       if (key === 'href' || key === 'to') {
         start.unshift(attr)

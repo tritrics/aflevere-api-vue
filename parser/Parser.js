@@ -1,25 +1,26 @@
 import { each, has, isArr, isObj } from '../fnlib'
 
-import { createBoolean } from './fields/Boolean'
-import { createBlock } from './fields/Block'
-import { createCollection } from './fields/Collection'
-import { createDate } from './fields/Date'
-import { createDateTime } from './fields/DateTime'
-import { createFile } from './fields/File'
-import { createHtml } from './fields/Html'
-import { createImage } from './fields/Image'
-import { createLink } from './fields/Link'
-import { createLanguage } from './fields/Language'
-import { createLanguages } from './fields/Languages'
-import { createMarkdown } from './fields/Markdown'
-import { createNumber } from './fields/Number'
-import { createOption } from './fields/Option'
-import { createPage } from './fields/Page'
-import { createSite } from './fields/Site'
-import { createString } from './fields/String'
-import { createText } from './fields/Text'
-import { createTime } from './fields/Time'
-import { createUser } from './fields/User'
+import { createBoolean } from './models/Boolean'
+import { createBlock } from './models/Block'
+import { createDate } from './models/Date'
+import { createDateTime } from './models/DateTime'
+import { createFile } from './models/File'
+import { createHtml } from './models/Html'
+import { createImage } from './models/Image'
+import { createInfo } from './models/Info'
+import { createLink } from './models/Link'
+import { createLanguage } from './models/Language'
+import { createLanguages } from './models/Languages'
+import { createMarkdown } from './models/Markdown'
+import { createNodes } from './models/Nodes'
+import { createNumber } from './models/Number'
+import { createOption } from './models/Option'
+import { createPage } from './models/Page'
+import { createSite } from './models/Site'
+import { createString } from './models/String'
+import { createText } from './models/Text'
+import { createTime } from './models/Time'
+import { createUser } from './models/User'
 
 const Parser = class {
 
@@ -69,8 +70,8 @@ const Parser = class {
         return createBlock(this.parseValue(node))
       case 'boolean':
         return createBoolean(node)
-      case 'collection':
-        return createCollection(this.parseValue(node))
+      case 'nodes':
+        return createNodes(this.parseValue(node))
       case 'date':
         return createDate(node)
       case 'datetime':
@@ -85,6 +86,8 @@ const Parser = class {
         return createHtml(node)
       case 'image':
         return createImage(this.parseValue(node))
+      case 'info':
+        return createInfo(this.parseValue(node))
       case 'language':
         return createLanguage(node)
       case 'languages':

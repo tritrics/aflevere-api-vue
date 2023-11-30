@@ -1,9 +1,11 @@
-import { each, has, lower, isArr, isBool, isFunc, isInt, isObj, isStr, toStr, toBool } from '../fnlib'
+import { each, has, trim, lower, isArr, isBool, isFunc, isInt, isObj, isStr, toStr, toBool } from '../fnlib'
 
 const Options = class {
   host = null
 
-  lang = null
+  version = 'v1'
+
+  lang = () => null
 
   fields = 'all'
 
@@ -53,7 +55,7 @@ const Options = class {
 
   setHost(val) {
     if (isStr(val) && val.startsWith('http')) {
-      let host = val.toLowerCase().trim()
+      let host = this.normalize(val)
       if (host.endsWith('/')) {
         host = host.substring(0, host.length - 1)
       }
@@ -61,9 +63,19 @@ const Options = class {
     }
   }
 
-  setLang(val) {
+  setVersion(val) {
     if (isStr(val)) {
-      this.lang = val.toLowerCase().trim()
+      this.version = this.normalize(val)
+    }
+  }
+
+  setLang(val) {
+    if (isFunc(val)) {
+      this.lang = val
+    } else if (isStr(val)) {
+      this.lang = () => this.normalize(val)
+    } else if (val === null) {
+      this.lang = () => null
     }
   }
 
@@ -99,7 +111,7 @@ const Options = class {
 
   setOrder(val) {
     if (isStr(val)) {
-      const order = val.toLowerCase().trim()
+      const order = this.normalize(val)
       if (order === 'asc' || order === 'desc') {
         this.order = order
       }
@@ -122,6 +134,10 @@ const Options = class {
     if(isFunc(parser)) {
       this.parser = parser
     }
+  }
+
+  normalize(val) {
+    return trim(lower(val))
   }
 }
 

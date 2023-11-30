@@ -1,4 +1,4 @@
-import { isObj } from '../fnlib'
+import { isObj, toPath, isUrl } from '../fnlib'
 import Options from './Options'
 import ApiError from './ApiError'
 
@@ -65,15 +65,25 @@ const Request = class {
    * requests
    */
 
-  async languages() {
-    const url = this.getUrl(this.options.host, 'languages')
+  async info() {
+    const url = this.getUrl(
+      this.options.host, 
+      this.options.version,
+      'info'
+    )
     const data = this.options.sleep > 0 ? { sleep: this.options.sleep } : null
     const json = await this.apiRequest(url, data)
     return this.getResult(json)
   }
 
   async node(node) {
-    const url = this.getUrl(this.options.host, 'node', this.options.lang, node)
+    const url = this.getUrl(
+      this.options.host,
+      this.options.version,
+      'node',
+      this.options.lang(),
+      node
+    )
     const data = {
       fields: this.options.fields,
       sleep: this.options.sleep,
@@ -82,8 +92,14 @@ const Request = class {
     return this.getResult(json)
   }
 
-  async collection(node) {
-    const url = this.getUrl(this.options.host, 'collection', this.options.lang, node)
+  async nodes(node) {
+    const url = this.getUrl(
+      this.options.host, 
+      this.options.version,
+      'nodes',
+      this.options.lang(),
+      node
+    )
     const data = {
       page: this.options.page,
       limit: this.options.limit,
@@ -96,7 +112,11 @@ const Request = class {
   }
 
   async call(node, data) {
-    const url = this.getUrl(this.options.host, node)
+    const url = this.getUrl(
+      this.options.host,
+      this.options.version,
+      node
+    )
     const json = await this.apiRequest(url, data, false) // never parse, raw
     return this.getResult(json)
   }
@@ -113,21 +133,11 @@ const Request = class {
   }
 
   getUrl(...args) {
-    let url = args.shift()
-    if (!url) {
+    const res = toPath(...args)
+    if (!isUrl(res)) {
       throw new Error('No host defined for Api request')
     }
-    url = url.endsWith('/') ? url.substring(0, url.length - 1) : url
-    let i
-    for (i = 0; i < args.length; i += 1) {
-      if (args[i]) {
-        let arg = `${args[i]}`
-        arg = arg.startsWith('/') ? arg.substring(1) : arg
-        arg = arg.endsWith('/') ? arg.substring(0, arg.length - 1) : arg
-        url += `/${encodeURI(arg)}`
-      }
-    }
-    return url
+    return res
   }
 
   async apiRequest(url, data) {

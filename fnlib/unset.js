@@ -2,7 +2,7 @@ import isArr from './isArr'
 import isObj from './isObj'
 import has from './has'
 
-export default function deleteNode(obj, key) {
+export default function unset(obj, key) {
   if (!has(obj, key)) {
     return
   }

@@ -1,4 +1,4 @@
-import { isObj } from './fnlib'
+import { has, isObj, isFunc } from './fnlib'
 import Request from './api/Request'
 import Options from './api/Options'
 import { version } from '../../package.json'
@@ -31,17 +31,10 @@ export function createRequest(options, callback) {
 }
 
 /**
- * request languages
+ * request info
  */
-export async function getLanguages(options, callback) {
-  return await createRequest(options, callback).languages()
-}
-
-/**
- * request children
- */
-export async function getCollection(node, options, callback) {
-  return await createRequest(options, callback).collection(node)
+export async function getInfo(options, callback) {
+  return await createRequest(options, callback).info()
 }
 
 /**
@@ -49,6 +42,13 @@ export async function getCollection(node, options, callback) {
  */
 export async function getNode(node, options, callback) {
   return await createRequest(options, callback).node(node)
+}
+
+/**
+ * request nodes
+ */
+export async function getNodes(node, options, callback) {
+  return await createRequest(options, callback).nodes(node)
 }
 
 /**
@@ -62,17 +62,20 @@ export async function call(node, data) {
  * register the plugin
  * @param {Object} _options, optional
  */
-export function createApi(_options) {
+export async function createApi(_options) {
   if (isObj(_options)) {
     defineConfig(_options)
+  }
+  if (has(defaultOptions, 'lang') && isFunc(defaultOptions.lang)) {
+    defaultOptions.lang = await defaultOptions.lang() // call factory, inits languages and returns a getter for the language
   }
   return {
     install(app) {
       app.config.globalProperties.$api = {
         defineConfig,
         createRequest,
-        getLanguages,
-        getCollection,
+        getInfo,
+        getNodes,
         getNode,
         call,
         VERSION,

@@ -1,17 +1,26 @@
+import each from './each'
 import toStr from './toStr'
+import isNum from './isNum'
 import isStr from './isStr'
 import trim from './trim'
+import isUrl from './isUrl'
 
 /**
- * Creates an uri with leading slash from any kind of given parameters
+ * Creates a path or url from any kind of parameters
+ * adds a leading slash, if it's not an url
  */
 export default function toPath(...args) {
   const res = []
-  for (let i = 0; i < args.length; i += 1) {
-    let arg = toStr(args[i])
-    if (isStr(arg, 1)) {
-      res.push(trim(arg, '/'))
+  each(args, (arg) => {
+    if(isNum(arg)) {
+      arg = toStr(arg)
+    } else if (isStr(arg)) {
+      arg = trim(arg, '/')
     }
-  }
-  return encodeURI(`/${res.join('/')}`)
+    if (isStr(arg, 1)) {
+      res.push(encodeURI(arg))
+    }
+  })
+  const path = res.join('/')
+  return isUrl(path) ? path : `/${path}`
 }

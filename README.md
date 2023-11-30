@@ -4,6 +4,8 @@ A Vue.js plugin, that is build to use the Kirby CMS as a data backend. The plugi
 
 This is pre-release for test purposes. Documentation is coming later.
 
+**The functionallity is likely to change until final release!**
+
 ## Author
 
 Michael Adams  

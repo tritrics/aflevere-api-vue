@@ -23,14 +23,13 @@ export function createLanguage(obj) {
       return this._link._attr(asString, options)
     },
   }
-
-  obj.meta.default = toBool(obj.meta.default)
   
   let data = {
     _type: 'language',
     _meta: obj.meta,
     _link: createLink(obj),
   }
+  data._meta.default = toBool(data._meta.default)
   if (has(obj, 'terms')) {
     data._terms = obj.terms
   }
