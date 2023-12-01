@@ -117,6 +117,10 @@ export function isValid(lang) {
   return has(langMap, lang)
 }
 
+export function isCurrentLang(lang) {
+  return lang === current
+}
+
 /**
  * Returning the plugin factory function
  */
