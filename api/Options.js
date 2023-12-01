@@ -41,9 +41,6 @@ const OptionsWrapper = class {
   }
 
   getLang() {
-    if (isFunc(this.i18n) && !isStr(this.#params.lang)) {
-      return this.i18n()
-    }
     return this.#params.lang
   }
 
@@ -168,21 +165,6 @@ const OptionsWrapper = class {
 
   hasParser() {
     return isFunc(this.parser)
-  }
-
-  /**
-   * Plugin: i18n
-   */
-  i18n = null // contains language getter
-
-  setI18n(i18n) {
-    if (isFunc(i18n)) {
-      this.i18n = i18n
-    }
-  }
-
-  hasI18n() {
-    return isFunc(this.i18n)
   }
 
   /**

@@ -1,4 +1,4 @@
-import { has, isObj, isFunc } from '../fnlib'
+import { has, isObj, isStr, isFunc } from '../fnlib'
 import Request from './Request'
 import OptionsWrapper from './Options'
 import { subscribe } from '../events'
@@ -68,12 +68,19 @@ export async function call(node, data) {
   return await createRequest().call(node, data)
 }
 
+function setLang(lang) {
+  if (isStr(lang, 1)) {
+    Options.setLang(lang)
+  }
+}
+
 /**
  * register the plugin
  */
 export async function createApi(params) {
   if (isObj(params)) {
     defineConfig(params)
+    subscribe('on-changed-lang', setLang)
 
     /**
      * Register parser-function in options
@@ -89,9 +96,7 @@ export async function createApi(params) {
      * after defineConfig, because i18n uses options to request info
      */
     if (has(params, 'lang') && isFunc(params.lang)) {
-      const i18n = await params.lang()
-      Options.setI18n(i18n)
-      Options.setLang(null)
+      await params.lang()
     }
   }
   return {
