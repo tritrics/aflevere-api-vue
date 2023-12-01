@@ -1,7 +1,7 @@
 import { each, has, clone, merge, isObj } from '../fnlib'
 
-const Options = class {
-  props = {
+const OptionsWrapper = class {
+  #params = {
     global: {
       locale: {
         default: undefined,
@@ -33,14 +33,14 @@ const Options = class {
       }
     },
     date: {
-      // @see: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#options
+      // @see: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#params
       format: {
         default: { year: 'numeric', month: 'numeric', day: 'numeric', },
         value: null,
       }
     },
     time: {
-      // @see: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#options
+      // @see: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#params
       format: {
         default: { hour: '2-digit', minute: '2-digit', },
         value: null,
@@ -48,23 +48,26 @@ const Options = class {
     }
   }
 
-  constructor(_options = {}) {
-    this.set(_options, true)
+  constructor(params = {}) {
+    this.set(params, true)
   }
 
-  set(_options, reset = false) {
-    each(this.props, (fieldDef, field) => {
-      each(fieldDef, (def, prop) => {
-        if (reset) {
-          def.value = clone(def.default)
-        }
-        if(has(_options, field) && has(_options[field], prop)) {
-          if (isObj(def.default)) {
-            merge(def.value, _options[field][prop])
+  set(params, reset = false) {
+    if (reset) {
+      this.reset()
+    }
+    each(params, (props, field) => {
+      if (has(this.#params, field)) {
+        each(props, (prop, key) => {
+          if (has(this.#params[field], key)) {
+            if (isObj(prop.default)) {
+              this.#params[field][key].value = merge(prop.value, params[field][key])
+            } else {
+              this.#params[field][key].value = params[field][key]
+            }
           }
-          def.value = _options[field][prop]
-        }
-      })
+        })
+      }
     })
   }
 
@@ -72,20 +75,28 @@ const Options = class {
    * get a specific option (prop) for a field from parserOptions
    * optionally return the user-given option
    */
-  get(path, _options = {}) {
+  get(path, params = {}) {
     const nodes = path.split('.')
     const field = nodes[0]
     const prop = nodes[1]
 
     // return user option if given and valid
-    if (has(_options, prop)) {
-      if (isObj(this.props[field][prop].default)) {
-        return merge(clone(this.props[field][prop].value), _options[prop])
+    if (has(params, prop)) {
+      if (isObj(this.#params[field][prop].default)) {
+        return merge(clone(this.#params[field][prop].value), params[prop])
       }
-      return _options[prop]
+      return params[prop]
     }
-    return this.props[field][prop].value
+    return this.#params[field][prop].value
+  }
+
+  reset() {
+    each(this.#params, (props, field) => {
+      each(props, (prop, key) => {
+        prop.value = clone(prop.default)
+      })
+    })
   }
 }
 
-export default Options
+export default OptionsWrapper

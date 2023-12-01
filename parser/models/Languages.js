@@ -3,9 +3,6 @@ import base from './Base'
 
 export function createLanguages(obj) {
   const functions = {
-    _val() {
-      return this._v_meta.slug
-    },
     _has(code) {
       return isStr(code) && has(this._value, code)
     },
@@ -37,7 +34,6 @@ export function createLanguages(obj) {
   
   let data = {
     _type: 'languages',
-    _meta: obj.meta,
     _value: obj.value,
   }
   return toObj(base, functions, data)

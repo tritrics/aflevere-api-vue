@@ -1,54 +1,87 @@
-import { each, has, trim, lower, isArr, isBool, isFunc, isInt, isObj, isStr, toStr, toBool } from '../fnlib'
+import { APIVERSION } from './index.js'
+import { each, has, trim, lower, isArr, isBool, isFunc, isInt, isObj, isStr, toStr, toBool, upperFirst } from '../fnlib'
 
-const Options = class {
-  host = null
-
-  version = 'v1'
-
-  lang = () => null
-
-  fields = 'all'
-
-  limit = 10
-
-  page = 1
-
-  order = 'asc'
-
-  raw = false
-
-  sleep = 0
-
-  parser = false
-
-  props = ['host', 'lang', 'fields', 'limit', 'page', 'order', 'raw', 'sleep', 'parser']
-
-  constructor(_options = {}) {
-    this.set(_options)
+const OptionsWrapper = class {
+  #params = {
+    host: null,
+    lang:  null,
+    fields: 'all',
+    limit: 10,
+    page: 1,
+    order: 'asc',
+    raw: false,
+    sleep: 0,
   }
 
-  clone(_options) {
-    const clone = new Options()
-    each(this.props, (prop) => {
-      clone[prop] = this[prop]
-    })
-    clone.set(_options)
+  constructor(params = {}) {
+    this.set(params)
+  }
+
+  clone(params, reset = false) {
+    const clone = new OptionsWrapper()
+    if (!reset) {
+      clone.set(structuredClone(this.#params))
+    }
+    clone.set(params)
+    clone.parser = this.parser
+    clone.i18n = this.i18n
     return clone
   }
 
-  set(_options) {
-    if (!isObj(_options)) return
-    each(this.props, (prop) => {
-      if (has(_options, prop)) {
-        const setter = `set${prop.charAt(0).toUpperCase()}${prop.slice(1)}`
-        this[setter](_options[prop])
-      }
-    })
+  /**
+   * Getter
+   */
 
-    each(_options, (val, key) => {
-      const prop = toStr(key).toLowerCase()
-      if (has(this.setter, prop)) {
-        this.setter[prop](val)
+  getVersion() {
+    return APIVERSION
+  }
+
+  getHost() {
+    return this.#params.host
+  }
+
+  getLang() {
+    if (isFunc(this.i18n) && !isStr(this.#params.lang)) {
+      return this.i18n()
+    }
+    return this.#params.lang
+  }
+
+  getFields() {
+    return this.#params.fields
+  }
+
+  getLimit() {
+    return this.#params.limit
+  }
+
+  getPage() {
+    return this.#params.page
+  }
+
+  getOrder() {
+    return this.#params.order
+  }
+
+  getRaw() {
+    return this.#params.raw
+  }
+
+  getSleep() {
+    return this.#params.sleep
+  }
+
+  /**
+   * Setter
+   */
+  set(_options) {
+    if (!isObj(_options)) {
+      return
+    }
+    each(this.#params, (val, prop) => {
+      if (has(_options, prop)) {
+        const setter = `set${upperFirst(prop)}`
+        this[setter](_options[prop])
       }
     })
   }
@@ -59,23 +92,15 @@ const Options = class {
       if (host.endsWith('/')) {
         host = host.substring(0, host.length - 1)
       }
-      this.host = host
-    }
-  }
-
-  setVersion(val) {
-    if (isStr(val)) {
-      this.version = this.normalize(val)
+      this.#params.host = host
     }
   }
 
   setLang(val) {
-    if (isFunc(val)) {
-      this.lang = val
-    } else if (isStr(val)) {
-      this.lang = () => this.normalize(val)
-    } else if (val === null) {
-      this.lang = () => null
+    if (isStr(val)) {
+      this.#params.lang = this.normalize(val)
+    } else {
+      this.#params.lang = null
     }
   }
 
@@ -83,7 +108,7 @@ const Options = class {
     let fields = []
     if (val.length === 1) {
       if (toBool(val[0]) === true) {
-        this.fields = 'all'
+        this.#params.fields = 'all'
         return
       } else if (isArr(val[0])) {
         fields = val[0]
@@ -94,18 +119,18 @@ const Options = class {
       fields = val
     }
     fields = fields.filter((field) => isStr(field, 1))
-    this.fields = fields.map((field) => lower(field))
+    this.#params.fields = fields.map((field) => lower(field))
   }
 
   setLimit(val) {
     if (isInt(val, 1)) {
-      this.limit = val
+      this.#params.limit = val
     }
   }
 
   setPage(val) {
     if (isInt(val, 1)) {
-      this.page = val
+      this.#params.page = val
     }
   }
 
@@ -113,22 +138,27 @@ const Options = class {
     if (isStr(val)) {
       const order = this.normalize(val)
       if (order === 'asc' || order === 'desc') {
-        this.order = order
+        this.#params.order = order
       }
     }
   }
 
   setRaw(val) {
-    this.raw = isBool(val) ? val : false
+    this.#params.raw = isBool(val) ? val : false
   }
 
   setSleep(val) {
-    if (isInt(val, 1, 10)) {
-      this.sleep = val
+    if (isInt(val, 0, 10)) {
+      this.#params.sleep = val
     } else {
-      this.sleep = 1
+      this.#params.sleep = 1
     }
   }
+
+  /**
+   * Plugin: parser
+   */
+  parser = null // contains parse function
 
   setParser(parser) {
     if(isFunc(parser)) {
@@ -136,9 +166,31 @@ const Options = class {
     }
   }
 
+  hasParser() {
+    return isFunc(this.parser)
+  }
+
+  /**
+   * Plugin: i18n
+   */
+  i18n = null // contains language getter
+
+  setI18n(i18n) {
+    if (isFunc(i18n)) {
+      this.i18n = i18n
+    }
+  }
+
+  hasI18n() {
+    return isFunc(this.i18n)
+  }
+
+  /**
+   * Helper
+   */
   normalize(val) {
     return trim(lower(val))
   }
 }
 
-export default Options
+export default OptionsWrapper

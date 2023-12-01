@@ -1,9 +1,10 @@
-import toStr from './toStr'
+import isStr from './isStr'
 
 export default function ltrim(val, chars = ' ') {
-  let res = toStr(val)
-  while (chars.includes(res.charAt(0))) {
-    res = res.substring(1)
+  if (isStr(val, 1)) {
+    while (chars.includes(val.charAt(0))) {
+      val = val.substring(1)
+    }
   }
-  return res
+  return val
 }
