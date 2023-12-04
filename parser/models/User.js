@@ -3,14 +3,14 @@ import base from './Base'
 
 export function createUser(obj) {
   const functions = {
-    _val() {
-      return this._v_meta.id
+    $val() {
+      return this.$meta.id
     },
   }
   
   let data = {
-    _type: 'user',
-    _meta: obj.meta,
+    $type: 'user',
+    $meta: obj.meta,
   }
   if (has(obj, 'value')) {
     data = { ...data, ...obj.value }

@@ -4,35 +4,35 @@ import { createLink } from './Link'
 
 export function createLanguage(obj) {
   const functions = {
-    _isDefault() {
-      return this._meta.default
+    $isDefault() {
+      return this.$meta.default
     },
-    _code() {
-      return this._meta.code
+    $code() {
+      return this.$meta.code
     },
-    _locale() {
-      return this._meta.locale
+    $locale() {
+      return this.$meta.locale
     },
-    _direction() {
-      return this._meta.direction
+    $direction() {
+      return this.$meta.direction
     },
-    _tag(options) {
-      return this._link._tag(options)
+    $tag(options) {
+      return this.$link.$tag(options)
     },
-    _attr(asString, options) { // { router: false , attr: { class: 'link-class' } }
-      return this._link._attr(asString, options)
+    $attr(asString, options) { // { router: false , attr: { class: 'link-class' } }
+      return this.$link.$attr(asString, options)
     },
   }
   
   let data = {
-    _type: 'language',
-    _meta: obj.meta,
-    _link: createLink(obj),
+    $type: 'language',
+    $meta: obj.meta,
+    $link: createLink(obj),
   }
-  data._meta.default = toBool(data._meta.default)
+  data.$meta.default = toBool(data.$meta.default)
   if (has(obj, 'terms')) {
-    data._terms = obj.terms
+    data.$terms = obj.terms
   }
-  data._value = obj.value
+  data.$value = obj.value
   return toObj(base, functions, data)
 }

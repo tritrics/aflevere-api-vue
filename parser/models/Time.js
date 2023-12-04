@@ -4,14 +4,14 @@ import base from './Base'
 
 export function createTime(obj) {
   const functions = {
-    _isOver() {
-      return now(this._value) > this._value
+    $isOver() {
+      return now(this.$value) > this.$value
     },
-    _isComing() {
-      return now(this._value) <= this._value
+    $isComing() {
+      return now(this.$value) <= this.$value
     },
     toString(options) {
-      return this._value.toLocaleTimeString(
+      return this.$value.toLocaleTimeString(
         getOption('global.locale', options),
         getOption('time.format', options)
       )
@@ -19,9 +19,9 @@ export function createTime(obj) {
   }
 
   const data = {
-    _type: 'time',
-    _value: new Date(Date.UTC(...obj.meta.jsdate.split(','))),
-    _timezone: obj.meta.timezone,
+    $type: 'time',
+    $value: new Date(Date.UTC(...obj.meta.jsdate.split(','))),
+    $timezone: obj.meta.timezone,
   }
   return toObj(base, functions, data)
 }

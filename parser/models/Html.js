@@ -21,25 +21,25 @@ function createNodes(nodes) {
 export function createHtml(obj) {
   const functions = {
 
-    // unlike in Node, the functions _tag() and _str() both return the same,
+    // unlike in Node, the functions $tag() and $str() both return the same,
     // because this object is a representation of the writer-field and 
-    // _value holds only a collection of html-nodes.
-    // Other functions like _attr() don't make sense here.
-    _tag(options) {
-      return this._str(options)
+    // $value holds only a collection of html-nodes.
+    // Other functions like $attr() don't make sense here.
+    $tag(options) {
+      return this.$str(options)
     },
-    _str(options) {
+    $str(options) {
       const res = []
-      each(this._value, (node) => {
-        res.push(node._tag(options))
+      each(this.$value, (node) => {
+        res.push(node.$tag(options))
       })
       return res.join('')
     },
   }
   
   const data = {
-    _type: 'html',
-    _value: createNodes(isArr(obj.value) ? obj.value : [ obj.value ]),
+    $type: 'html',
+    $value: createNodes(isArr(obj.value) ? obj.value : [ obj.value ]),
   }
   return toObj(base, functions, data)
 }

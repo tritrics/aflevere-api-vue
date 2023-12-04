@@ -4,20 +4,20 @@ import base from './Base'
 
 export function createNumber(obj) {
   const functions = {
-    _isMin(min) {
-      return isNum(this._value, min, null, true)
+    $isMin(min) {
+      return isNum(this.$value, min, null, true)
     },
-    _isMax(max) {
-      return isNum(this._value, null, max, true)
+    $isMax(max) {
+      return isNum(this.$value, null, max, true)
     },
-    _isGreater(min) {
-      return isNum(this._value, min, null, false)
+    $isGreater(min) {
+      return isNum(this.$value, min, null, false)
     },
-    _isSmaller(max) {
-      return isNum(this._value, null, max, false)
+    $isSmaller(max) {
+      return isNum(this.$value, null, max, false)
     },
-    _isBetween(min, max, boundariesIncluded = true) {
-      return isNum(this._value, min, max, boundariesIncluded)
+    $isBetween(min, max, boundariesIncluded = true) {
+      return isNum(this.$value, min, max, boundariesIncluded)
     },
     toString(options) {
       const fixed = getOption('number.fixed', options)
@@ -26,7 +26,7 @@ export function createNumber(obj) {
         stringOptions.minimumFractionDigits = fixed
         stringOptions.maximumFractionDigits = fixed
       }
-      return this._value.toLocaleString(
+      return this.$value.toLocaleString(
         getOption('global.locale', options),
         stringOptions
       )
@@ -34,8 +34,8 @@ export function createNumber(obj) {
   }
   
   const data = {
-    _type: 'number',
-    _value: toNum(obj.value),
+    $type: 'number',
+    $value: toNum(obj.value),
   }
   return toObj(base, functions, data)
 }

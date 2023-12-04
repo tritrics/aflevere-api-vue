@@ -1,14 +1,14 @@
 import { toStr } from '../../fnlib'
 
 const base = {
-  _val() {
-    return this._value
+  $val() {
+    return this.$value
   },
-  _str() {
+  $str() {
     return this.toString(...arguments)
   },
   toString() {
-    return toStr(this._val())
+    return toStr(this.$val())
   },
 }
 

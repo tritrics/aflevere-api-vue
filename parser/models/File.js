@@ -4,24 +4,24 @@ import { createLink } from './Link'
 
 export function createFile(obj) {
   const functions = {
-    _val() {
-      return this._v_meta.filename
+    $val() {
+      return this.$meta.filename
     },
-    _has(prop) {
+    $has(prop) {
       return isStr(prop) && has(this, prop)
     },
-    _tag(options) {
-      return this._link._tag(options)
+    $tag(options) {
+      return this.$link.$tag(options)
     },
-    _attr(asString, options) { // { router: false , attr: { class: 'link-class' } }
-      return this._link._attr(asString, options)
+    $attr(asString, options) { // { router: false , attr: { class: 'link-class' } }
+      return this.$link.$attr(asString, options)
     },
   }
   
   let data = {
-    _type: 'file',
-    _meta: obj.meta,
-    _link: createLink(obj),
+    $type: 'file',
+    $meta: obj.meta,
+    $link: createLink(obj),
   }
   if (has(obj, 'value')) {
     data = { ...data, ...obj.value }

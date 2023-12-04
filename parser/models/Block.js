@@ -3,14 +3,14 @@ import base from './Base'
 
 export function createBlock(obj) {
   const functions = {
-    _val() {
-      return this._v_meta.id
+    $val() {
+      return this.$meta.id
     },
   }
 
   let data = {
-    _type: 'block',
-    _block: obj.block,
+    $type: 'block',
+    $block: obj.block,
   }
   if (has(obj, 'value')) {
     data = { ...data, ...obj.value }

@@ -6,8 +6,8 @@ export function createOption(obj) {
   const functions = {}
   
   const data = {
-    _type: 'option',
-    _value: obj.value,
+    $type: 'option',
+    $value: obj.value,
   }
   if (has(obj, 'label')) {
     data.label = createString(obj.label)

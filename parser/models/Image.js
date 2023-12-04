@@ -6,8 +6,8 @@ export function createImage(obj) {
   const field = createFile(obj)
   
   const extend = {
-    _type: 'image',
-    _thumb(width = null, height = null, options = {}) {
+    $type: 'image',
+    $thumb(width = null, height = null, options = {}) {
       return createThumb(this, ...arguments)
     },
   }

@@ -6,57 +6,57 @@ const selfClosing = ['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input',
 
 export function createNode(obj) {
   const functions = {
-    _isSelfClosing() {
-      return has(this, '_element') && inArr(this._element, selfClosing)
+    $isSelfClosing() {
+      return has(this, '$element') && inArr(this.$element, selfClosing)
     },
-    _isNode() {
-      return has(this, '_element')
+    $isNode() {
+      return has(this, '$element')
     },
-    _isText() {
-      return !has(this, '_element')
+    $isText() {
+      return !has(this, '$element')
     },
-    _isLink() {
-      return this._isNode() && this._element === 'a'
+    $isLink() {
+      return this.$isNode() && this.$element === 'a'
     },
-    _hasChildren() {
-      return isArr(this._value)
+    $hasChildren() {
+      return isArr(this.$value)
     },
 
     // the html-element
-    _elem() {
-      return has(this, '_element') ? this._element : null
+    $elem() {
+      return has(this, '$element') ? this.$element : null
     },
 
     // attributes as string or object
-    _attr(asString, options) {
+    $attr(asString, options) {
       const add = getOption('html.attr', options)
-      const attr = { ...(this._attributes || {}), ...(add[this._element] || {}) }
+      const attr = { ...(this.$attributes || {}), ...(add[this.$element] || {}) }
       return toBool(asString) ? attrToStr(attr) : attr
     },
 
     // string including this elem = complete html-tag
-    _tag(options) {
-      if (this._isText()) {
-        return `${this._value}`
+    $tag(options) {
+      if (this.$isText()) {
+        return `${this.$value}`
       }
-      let attr = this._attr(true, options)
+      let attr = this.$attr(true, options)
       if (isStr(attr)) {
         attr = ` ${attr}`
       }
-      if (this._isSelfClosing()) {
-        return `<${this._element}${attr} />`
+      if (this.$isSelfClosing()) {
+        return `<${this.$element}${attr} />`
       }
-      return `<${this._element}${attr}>${this._str(options)}</${this._element}>`
+      return `<${this.$element}${attr}>${this.$str(options)}</${this.$element}>`
     },
 
-    // string of children (_value)
-    _str(options) {
-      if (!this._hasChildren()) {
-        return `${this._value}`
+    // string of children ($value)
+    $str(options) {
+      if (!this.$hasChildren()) {
+        return `${this.$value}`
       }
       let children = []
-      each(this._value, (child) => {
-        children.push(child._tag(options))
+      each(this.$value, (child) => {
+        children.push(child.$tag(options))
       })
       return children.join('')
     }
@@ -64,14 +64,14 @@ export function createNode(obj) {
 
   //const type = has(obj, 'elem') ? obj.elem : 'text'
   const data = {
-    _type: 'node'
+    $type: 'node'
   }
   if (has(obj, 'elem')) {
-    data._element = `${obj.elem}`.toLowerCase().trim()
+    data.$element = `${obj.elem}`.toLowerCase().trim()
   }
   if (has(obj, 'attr')) {
-    data._attributes = obj.attr
+    data.$attributes = obj.attr
   }
-  data._value = obj.value
+  data.$value = obj.value
   return toObj(base, functions, data)
 }

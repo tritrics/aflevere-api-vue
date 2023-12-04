@@ -4,23 +4,23 @@ import base from './Base'
 
 export function createDateTime(obj) {
   const functions = {
-    _isPast(includeToday = false) {
-      return includeToday ? today() >= this._value : today() > this._value
+    $isPast(includeToday = false) {
+      return includeToday ? today() >= this.$value : today() > this.$value
     },
-    _isFuture(includeToday = false) {
-      return includeToday ? today() <= this._value : today() < this._value
+    $isFuture(includeToday = false) {
+      return includeToday ? today() <= this.$value : today() < this.$value
     }, 
-    _isToday() {
-      return +today() === +this._value
+    $isToday() {
+      return +today() === +this.$value
     },
-    _isOver() {
-      return now() > this._value
+    $isOver() {
+      return now() > this.$value
     },
-    _isComing() {
-      return now() <= this._value
+    $isComing() {
+      return now() <= this.$value
     },
     toString(options) {
-      return this._value.toLocaleString(
+      return this.$value.toLocaleString(
         getOption('global.locale', options)
         , { ...getOption('date.format', options), ...getOption('time.format', options) }
       )
@@ -28,9 +28,9 @@ export function createDateTime(obj) {
   }
   
   const data = {
-    _type: 'datetime',
-    _value: new Date(Date.UTC(...obj.meta.jsdate.split(','))),
-    _timezone: obj.meta.timezone,
+    $type: 'datetime',
+    $value: new Date(Date.UTC(...obj.meta.jsdate.split(','))),
+    $timezone: obj.meta.timezone,
   }
   return toObj(base, functions, data)
 }

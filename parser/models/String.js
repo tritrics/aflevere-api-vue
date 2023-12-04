@@ -21,8 +21,8 @@ export function createString(mixed) {
   const functions = {}
   
   const data = {
-    _type: 'string',
-    _value: value,
+    $type: 'string',
+    $value: value,
   }
   return toObj(base, functions, data)
 }

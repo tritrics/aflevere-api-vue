@@ -3,17 +3,17 @@ import base from './Base'
 
 export function createLanguages(obj) {
   const functions = {
-    _has(code) {
-      return isStr(code) && has(this._value, code)
+    $has(code) {
+      return isStr(code) && has(this.$value, code)
     },
-    _get(code) {
-      return this._value[code] || false
+    $get(code) {
+      return this.$value[code] || false
     },
-    _codes(defaultFirst = true) {
+    $codes(defaultFirst = true) {
       const first = []
       const codes = []
-      each(this._value, (lang, code) => {
-        if (defaultFirst && lang._isDefault()) {
+      each(this.$value, (lang, code) => {
+        if (defaultFirst && lang.$isDefault()) {
           first.push(code)
         } else {
           codes.push(code)
@@ -21,10 +21,10 @@ export function createLanguages(obj) {
       })
       return first.concat(codes.sort())
     },
-    _default() {
+    $default() {
       let res = false
-      each(this._value, lang => {
-        if (lang._default()) {
+      each(this.$value, lang => {
+        if (lang.$default()) {
           res = lang
         }
       })
@@ -33,8 +33,8 @@ export function createLanguages(obj) {
   }
   
   let data = {
-    _type: 'languages',
-    _value: obj.value,
+    $type: 'languages',
+    $value: obj.value,
   }
   return toObj(base, functions, data)
 }

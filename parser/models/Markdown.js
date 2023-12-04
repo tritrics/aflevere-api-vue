@@ -5,8 +5,8 @@ export function createMarkdown(obj) {
   const field = createString(obj)
   
   const extend = {
-    _type: 'markdown',
-    _html() {
+    $type: 'markdown',
+    $html() {
       return 'mardown converting to html not implemented yet'
     },
   }

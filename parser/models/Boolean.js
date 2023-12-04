@@ -3,22 +3,22 @@ import base from './Base'
 
 export function createBoolean(obj) {
   const functions = {
-    _is(prop) {
-      return this._value === toBool(prop)
+    $is(prop) {
+      return this.$value === toBool(prop)
     },
 
-    _isTrue() {
-      return this._value === true
+    $isTrue() {
+      return this.$value === true
     },
     
-    _isFalse() {
-      return this._value === false
+    $isFalse() {
+      return this.$value === false
     },
   }
   
   const data = {
-    _type: 'boolean',
-    _value: toBool(obj.value),
+    $type: 'boolean',
+    $value: toBool(obj.value),
   }
   return toObj(base, functions, data)
 }

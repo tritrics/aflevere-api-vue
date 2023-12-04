@@ -9,9 +9,9 @@ export function createNodes(obj) {
   const functions = { }
   
   let data = {
-    _type: 'nodes',
-    _meta: obj.meta,
-    _value: obj.value,
+    $type: 'nodes',
+    $meta: obj.meta,
+    $value: obj.value,
   }
   return toObj(base, functions, data)
 }

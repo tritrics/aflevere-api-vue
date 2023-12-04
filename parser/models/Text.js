@@ -6,12 +6,12 @@ export function createText(obj) {
   const field = createString(obj)
   
   const extend = {
-    _type: 'text',
-    _str(options) {
+    $type: 'text',
+    $str(options) {
       return this.toString(options)
     },
     toString(options) {
-      let str = this._val()
+      let str = this.$val()
       if(getOption('text.nl2br', options)) {
         str = str.replace(/\n/mg, '<br />')
       }

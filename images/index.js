@@ -3,8 +3,8 @@ import Thumb from './Thumb'
 
 export function createThumb(image, width = null, height = null, options = {}) {
   let meta = {}
-  if (has(image, '_meta')) { // parser object given
-    meta = image._meta
+  if (has(image, '$meta')) { // parser object given
+    meta = image.$meta
   } else if (has(image, 'meta')) { // raw file object given
     meta = image.meta
   } else { // any other object given

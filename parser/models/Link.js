@@ -18,9 +18,9 @@ export function createLink(obj) {
   const field = createNode(node)
   
   const extend = {
-    _attr(asString, options) {
+    $attr(asString, options) {
       const router = toBool(getOption('link.router', options))
-      const elemAttr = { ...(this._attributes || {}) }
+      const elemAttr = { ...(this.$attributes || {}) }
       if (elemAttr.type === 'intern' && router) {
         elemAttr.to = elemAttr.href
         elemAttr['router-link'] = null
@@ -29,7 +29,7 @@ export function createLink(obj) {
       elemAttr[`data-link-${elemAttr.type}`] = null
       delete(elemAttr.type)
       const add = getOption('html.attr', options)
-      const attr = { ...elemAttr, ...(add[this._element] || {}) }
+      const attr = { ...elemAttr, ...(add[this.$element] || {}) }
       return toBool(asString) ? attrToStr(attr) : attr
     }
   }

@@ -4,17 +4,17 @@ import base from './Base'
 
 export function createDate(obj) {
   const functions = {
-    _isPast(includeToday = false) {
-      return includeToday ? today() >= this._value : today() > this._value
+    $isPast(includeToday = false) {
+      return includeToday ? today() >= this.$value : today() > this.$value
     },
-    _isFuture(includeToday = false) {
-      return includeToday ? today() <= this._value : today() < this._value
+    $isFuture(includeToday = false) {
+      return includeToday ? today() <= this.$value : today() < this.$value
     },
-    _isToday() {
-      return +today() === +this._value
+    $isToday() {
+      return +today() === +this.$value
     },
     toString(options) {
-      return this._value.toLocaleDateString(
+      return this.$value.toLocaleDateString(
         getOption('global.locale', options),
         getOption('date.format', options)
       )
@@ -22,9 +22,9 @@ export function createDate(obj) {
   }
 
   const data = {
-    _type: 'date',
-    _value: new Date(Date.UTC(...obj.meta.jsdate.split(','))),
-    _timezone: obj.meta.timezone,
+    $type: 'date',
+    $value: new Date(Date.UTC(...obj.meta.jsdate.split(','))),
+    $timezone: obj.meta.timezone,
   }
   return toObj(base, functions, data)
 }

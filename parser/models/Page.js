@@ -4,29 +4,29 @@ import { createLink } from './Link'
 
 export function createPage(obj) {
   const functions = {
-    _val() {
-      return this._v_meta.slug
+    $val() {
+      return this.$meta.slug
     },
-    _has(prop) {
+    $has(prop) {
       return isStr(prop) && has(this, prop)
     },
-    _tag(options) {
-      return this._link._tag(options)
+    $tag(options) {
+      return this.$link.$tag(options)
     },
-    _attr(asString, options) { // { router: false , attr: { class: 'link-class' } }
-      return this._link._attr(asString, options)
+    $attr(asString, options) { // { router: false , attr: { class: 'link-class' } }
+      return this.$link.$attr(asString, options)
     },
   }
   
   let data = {
-    _type: 'page',
-    _meta: obj.meta,
-    _link: createLink(obj),
+    $type: 'page',
+    $meta: obj.meta,
+    $link: createLink(obj),
   }
   if (has(obj, 'translations')) {
-    data._translations = {}
+    data.$translations = {}
     each(obj.translations, (link, lang) => {
-      data._translations[lang] = createLink(link)
+      data.$translations[lang] = createLink(link)
     })
   }
   if (has(obj, 'value')) {

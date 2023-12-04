@@ -4,27 +4,27 @@ import { createLink } from './Link'
 
 export function createInfo(obj) {
   const functions = {
-    _val() {
-      return this._v_meta.slug
+    $val() {
+      return this.$meta.slug
     },
-    _has(prop) {
+    $has(prop) {
       return isStr(prop) && has(this, prop)
     },
-    _multilang() {
-      return this._meta.multilang
+    $multilang() {
+      return this.$meta.multilang
     },
-    _languages() {
-      return has(this._meta, 'languages') ? this._meta.languages : 0
+    $languages() {
+      return has(this.$meta, 'languages') ? this.$meta.languages : 0
     },
   }
 
   let data = {
-    _type: 'info',
-    _meta: obj.meta,
+    $type: 'info',
+    $meta: obj.meta,
   }
-  data._meta.multilang = toBool(data._meta.multilang)
+  data.$meta.multilang = toBool(data.$meta.multilang)
   if (has(obj, 'interface')) {
-    data._interface = obj.interface
+    data.$interface = obj.interface
   }
   if (has(obj, 'value')) {
     data = { ...data, ...obj.value }

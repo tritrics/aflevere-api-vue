@@ -23,13 +23,13 @@ const Thumb = class {
     this.image = image
     this.title = image.title || ''
     this.hires = window.devicePixelRatio > 1
-    this._dim(width, height)
-    this._crop(options.crop || false)
-    this._blur(options.blur || null)
+    this.$dim(width, height)
+    this.$crop(options.crop || false)
+    this.$blur(options.blur || null)
     if (toBool(options.bw)) {
-      this._bw()
+      this.$bw()
     }
-    this._quality(options.quality || null)
+    this.$quality(options.quality || null)
   }
 
   async _preload() {
@@ -41,7 +41,7 @@ const Thumb = class {
     })
   }
 
-  _dim(width, height) {
+  $dim(width, height) {
     if (!isInt(width, 1) && !isInt(height, 1)) {
       this.width = this.image.width
       this.height = this.image.height
@@ -52,7 +52,7 @@ const Thumb = class {
     return this
   }
   
-  _crop(crop) {
+  $crop(crop) {
     if (isBool(crop)) {
       this.crop = toBool(crop) ? 'center' : false
     } else if (isStr(crop)) {
@@ -64,19 +64,19 @@ const Thumb = class {
     return this
   }
 
-  _blur(blur) {
+  $blur(blur) {
     if (isInt(blur, 0)) {
       this.blur = blur
     }
     return this
   }
 
-  _bw() {
+  $bw() {
     this.bw = true
     return this
   }
 
-  _quality(quality) {
+  $quality(quality) {
     if (isInt(quality, 1, 100)) {
       this.quality = quality
     }
@@ -84,7 +84,7 @@ const Thumb = class {
   }
 
   // getter for attributes
-  _attr(asString) {
+  $attr(asString) {
     if (!isObj(this.image)) {
       return
     }
@@ -96,11 +96,11 @@ const Thumb = class {
     return toBool(asString) ? attrToStr(attr) : attr
   }
 
-  _tag() {
-    return `<img ${this._attr(true)} />`
+  $tag() {
+    return `<img ${this.$attr(true)} />`
   }
 
-  _val () {
+  $val () {
     return {
       width:  this.width,
       height:  this.height,
@@ -113,13 +113,13 @@ const Thumb = class {
     }
   }
 
-  _str() {
+  $str() {
     const attr = this.calculateThumb()
     return attr.src
   }
 
   toString() {
-    return this._tag()
+    return this.$tag()
   }
 
   calculateThumb() {
