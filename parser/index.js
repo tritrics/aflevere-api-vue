@@ -1,5 +1,5 @@
 import { each, has, isArr, isObj, isStr } from '../fnlib'
-import { subscribe } from '../events'
+import { subscribe } from '../api'
 import OptionsWrapper from './Options'
 import { createBoolean } from './models/Boolean'
 import { createBlock } from './models/Block'
@@ -9,14 +9,14 @@ import { createFile } from './models/File'
 import { createHtml } from './models/Html'
 import { createImage } from './models/Image'
 import { createInfo } from './models/Info'
-import { createLink } from './models/Link'
+import { createHtmlLink } from './models/HtmlLink'
 import { createLanguage } from './models/Language'
 import { createLanguages } from './models/Languages'
 import { createMarkdown } from './models/Markdown'
+import { createNode } from './models/Node'
 import { createNodes } from './models/Nodes'
 import { createNumber } from './models/Number'
 import { createOption } from './models/Option'
-import { createPage } from './models/Page'
 import { createSite } from './models/Site'
 import { createString } from './models/String'
 import { createText } from './models/Text'
@@ -64,8 +64,6 @@ function parseField(node) {
       return createBlock(parseValue(node))
     case 'boolean':
       return createBoolean(node)
-    case 'nodes':
-      return createNodes(parseValue(node))
     case 'date':
       return createDate(node)
     case 'datetime':
@@ -73,7 +71,7 @@ function parseField(node) {
     case 'email':
     case 'tel':
     case 'url':
-      return createLink(node)
+      return createHtmlLink(node)
     case 'file':
       return createFile(parseValue(node))
     case 'html':
@@ -88,12 +86,14 @@ function parseField(node) {
       return createLanguages(parseValue(node))
     case 'markdown':
       return createMarkdown(node)
+    case 'node':
+      return createNode(parseValue(node))
+    case 'nodes':
+      return createNodes(parseValue(node))
     case 'number':
       return createNumber(node)
     case 'option':
       return createOption(node)
-    case 'page':
-      return createPage(parseValue(node))
     case 'site':
       return createSite(parseValue(node))
     case 'text':

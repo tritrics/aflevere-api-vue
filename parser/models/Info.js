@@ -1,6 +1,5 @@
 import { has, toBool, isStr, toObj } from '../../fnlib'
 import base from './Base'
-import { createLink } from './Link'
 
 export function createInfo(obj) {
   const functions = {

@@ -9,9 +9,9 @@ import regEsc from './regEsc'
 export default function numberRegEx (decimals, decPoint = '.') {
   var res = '^(\\d)*' // thousandSep-test: '^\\d{1,3}([,]?\\d{3})*'
   if (isInt(decimals, 1)) {
-    res += '(' + regEsc(decPoint) + '\\d{0,' + decimals + '})?'
+    res += `(${regEsc(decPoint)}\d{0,${decimals}})?`
   } else if (decimals === '*') {
-    res += '(' + regEsc(decPoint) + '\\d*)?'
+    res += `(${regEsc(decPoint)}\d*)?`
   }
   return new RegExp(res +'$')
 }

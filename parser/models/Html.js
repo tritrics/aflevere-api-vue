@@ -1,7 +1,7 @@
 import { has, each, toObj, isArr } from '../../fnlib'
 import base from './Base'
-import { createNode } from './Node'
-import { createLink } from './Link'
+import { createHtmlNode } from './HtmlNode'
+import { createHtmlLink } from './HtmlLink'
 
 function createNodes(nodes) {
   const res = []
@@ -10,9 +10,9 @@ function createNodes(nodes) {
       fragment.value = createNodes(fragment.value)
     }
     if (has(fragment, 'elem') && fragment.elem === 'a') {
-      res.push(createLink(fragment))
+      res.push(createHtmlLink(fragment))
     } else {
-      res.push(createNode(fragment))
+      res.push(createHtmlNode(fragment))
     }
   })
   return res

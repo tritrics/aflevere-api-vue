@@ -1,21 +1,21 @@
 import { attrToStr, extendObj, toBool } from '../../fnlib'
 import { getOption } from '../index'
-import { createNode } from './Node'
+import { createHtmlNode } from './HtmlNode'
 
 // creates Link from fields (url, email...) or link-nodes in writer
-export function createLink(obj) {
+export function createHtmlLink(obj) {
   const node = {
     elem: 'a',
-    attr: obj.link || obj.attr,
+    attr: obj.home || obj.link || obj.attr,
   }
-  if (obj.type === 'page') {
+  if (obj.type === 'node') {
     node.value = obj.meta.title
   } else if (obj.type === 'file' || obj.type === 'image') {
     node.value = obj.meta.title
-  } else {
+  } else if (obj.type !== 'site') {
     node.value = obj.value
   }
-  const field = createNode(node)
+  const field = createHtmlNode(node)
   
   const extend = {
     $attr(asString, options) {

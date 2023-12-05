@@ -1,5 +1,5 @@
 import { APIVERSION } from './index.js'
-import { each, has, trim, lower, isArr, isBool, isFunc, isInt, isObj, isStr, toStr, toBool, upperFirst } from '../fnlib'
+import { each, has, trim, lower, isArr, isBool, isFunc, isInt, isObj, isStr, toBool, upperFirst } from '../fnlib'
 
 const OptionsWrapper = class {
   #params = {

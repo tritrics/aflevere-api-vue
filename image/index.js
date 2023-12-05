@@ -1,5 +1,6 @@
-import { has } from '../fnlib'
+import { has, isStr } from '../fnlib'
 import Thumb from './Thumb'
+import { getPluginName } from '../api'
 
 export function createThumb(image, width = null, height = null, options = {}) {
   let meta = {}
@@ -21,4 +22,16 @@ export function createThumb(image, width = null, height = null, options = {}) {
   }
 }
 
-export default Thumb
+export function createImage(params) {
+  const pluginName = getPluginName(params, 'image')
+
+  // register Plugin
+  return {
+    install(app, options) {
+      app.config.globalProperties[`$${pluginName}`] = {
+        createThumb,
+      }
+      app.provide(pluginName, app.config.globalProperties[`$${pluginName}`])
+    }
+  }
+}

@@ -1,65 +1,65 @@
-import { each, trim, lower, has, isStr, toBool } from '../fnlib'
-import { getInfo, Options } from '../api'
-import { publish } from '../events'
+import { ref } from 'vue'
+import { each, trim, lower, has, isObj, toBool } from '../fnlib'
+import { getInfo, Options, publish, getPluginName } from '../api'
 
 /**
  * multilang sites have at least one language and the Kirby config
  * "languages" is true.
  */
-let multilang = false
+const multilang = ref(false)
 
 /**
  * urrent selected lang
  */
-let current = null
+const current = ref(null)
 
 /**
- * lookup, lang => { locale: 'de_DE', default: true }
+ * original response data, parsed or not
+ */
+const data = ref({})
+
+/**
+ * INTERN lookup, lang => { locale: 'de_DE', default: true }
  */
 const langMap = {}
 
 /**
- * for export
  */
-export let languages = {}
+export function isMultilang() {
+  return multilang.value === true
+}
 
 /**
- * init / request languages
  */
-async function getAll() {
-  const json = await getInfo({ raw: true })
-  multilang = json.body.meta.multilang
-  if (!multilang) {
-    return
-  }
-  each(json.body.value.languages.value, (props, lang) => {
-    langMap[lang] = {
-      locale: props.meta.locale,
-      default: toBool(props.meta.default)
-    }
-  })
+export function isLanguage(lang) {
+  return current.value === lang
+}
 
-  // store language node for export, no intern use
-  // either parsed or not
+/**
+ */
+export function isValidLanguage(lang) {
+  return has(langMap, lang)
+}
+
+/**
+ */
+export function getLanguage() {
+  return current.value
+}
+
+/**
+ */
+export function getLanguages() {
   if (Options.hasParser()) {
-    languages = Options.parser(json.body.value.languages)
+    return data.value.languages
   } else {
-    languages = json.body.value.languages.value
+    return data.value.body.value.languages.value
   }
 }
 
-function getUserLang() {
-  const languages = navigator.languages
-  for (let i = 0; i < languages.length; i++) {
-    let lang = languages[i].toLowerCase().split('-').shift()
-    if (isValid(lang)) {
-      return lang
-    }
-  }
-  return null
-}
-
-function getDefaultLang() {
+/**
+ */
+export function getDefaultLanguage() {
   for (let lang in langMap) {
     if (langMap[lang].default) {
       return lang
@@ -68,12 +68,16 @@ function getDefaultLang() {
   return null
 }
 
-export function isMultilang() {
-  return multilang
-}
-
-export function getLang() {
-  return current
+/**
+ */
+export function getUserLanguage() {
+  for (let i = 0; i < navigator.languages.length; i++) {
+    let lang = navigator.languages[i].toLowerCase().split('-').shift()
+    if (isValidLanguage(lang)) {
+      return lang
+    }
+  }
+  return null
 }
 
 /**
@@ -81,7 +85,7 @@ export function getLang() {
  * 
  * Language detection doesn't analyse the url, this must be done
  * in the router and eventuelly the router overrides the detected
- * language using isValid() and setLang().
+ * language using isValid() and setLanguage().
  * 
  * Method detects the preferred/fallback language from:
  * 
@@ -94,40 +98,71 @@ export function getLang() {
  * @param boolean getDefault
  * @return string
  */
-export function setLang(lang, getUser = false, getDefault = false) {
-  if (!multilang || (lang === current && isValid(lang))) {
-    return current
+export function setLanguage(lang, getUser = false, getDefault = false) {
+  if (!multilang.value || (lang === current.value && isValidLanguage(lang))) {
+    return current.value
   }
   let res = lower(trim(lang))
-  if (getUser && !isValid(res)) {
-    res = getUserLang()
+  if (getUser && !isValidLanguage(res)) {
+    res = getUserLanguage()
   }
-  if (getDefault && !isValid(res)) {
-    res = getDefaultLang()
+  if (getDefault && !isValidLanguage(res)) {
+    res = getDefaultLanguage()
   }
-  if (isValid(res)) {
-    current = res
-    publish('on-changed-lang', current)
-    publish('on-changed-locale', langMap[current].locale)
+  if (isValidLanguage(res)) {
+    current.value = res
+    publish('on-changed-lang', current.value)
+    publish('on-changed-locale', langMap[current.value].locale)
   }
-  return current
+  return current.value
 }
 
-export function isValid(lang) {
-  return has(langMap, lang)
-}
-
-export function isCurrentLang(lang) {
-  return lang === current
+/**
+ * init / request languages
+ */
+async function requestLanguages() {
+  const json = await getInfo({ raw: true })
+  multilang.value = toBool(json.body.meta.multilang)
+  if (multilang.value) {
+    each(json.body.value.languages.value, (props, lang) => {
+      langMap[lang] = {
+        locale: props.meta.locale,
+        default: toBool(props.meta.default)
+      }
+    })
+  }
+  if (Options.hasParser()) {
+    data.value = Options.parser(json)
+  } else {
+    data.value = json
+  }
 }
 
 /**
  * Returning the plugin factory function
  */
-export async function createI18n(lang = null) {
-  return async () => {
-    await getAll()
-    setLang(lang, true, true)
-    return getLang
+export async function createI18n(params, namespace) {
+  const pluginName = getPluginName(params, 'i18n')
+
+  // request all languages and set default
+  await requestLanguages()
+  setLanguage(null, true, true)
+
+  // register Plugin
+  return {
+    install(app, options) {
+      app.config.globalProperties[`$${pluginName}`] = {
+        isMultilang,
+        isValidLanguage,
+        isLanguage,
+        getLanguage,
+        getDefaultLanguage,
+        getUserLanguage,
+        getLanguages,
+        setLanguage,
+        infoData: data,
+      }
+      app.provide(pluginName, app.config.globalProperties[`$${pluginName}`])
+    }
   }
 }

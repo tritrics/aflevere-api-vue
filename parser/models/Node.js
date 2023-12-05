@@ -1,77 +1,37 @@
-import { has, each, isArr, inArr, isStr, toBool, toObj, attrToStr } from '../../fnlib'
+import { has, each, isStr, toObj, toBool } from '../../fnlib'
 import base from './Base'
-import { getOption } from '../index'
-
-const selfClosing = ['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source', 'track', 'wbr']
+import { createHtmlLink } from './HtmlLink'
 
 export function createNode(obj) {
   const functions = {
-    $isSelfClosing() {
-      return has(this, '$element') && inArr(this.$element, selfClosing)
+    $val() {
+      return this.$meta.slug
     },
-    $isNode() {
-      return has(this, '$element')
+    $has(prop) {
+      return isStr(prop) && has(this, prop)
     },
-    $isText() {
-      return !has(this, '$element')
-    },
-    $isLink() {
-      return this.$isNode() && this.$element === 'a'
-    },
-    $hasChildren() {
-      return isArr(this.$value)
-    },
-
-    // the html-element
-    $elem() {
-      return has(this, '$element') ? this.$element : null
-    },
-
-    // attributes as string or object
-    $attr(asString, options) {
-      const add = getOption('html.attr', options)
-      const attr = { ...(this.$attributes || {}), ...(add[this.$element] || {}) }
-      return toBool(asString) ? attrToStr(attr) : attr
-    },
-
-    // string including this elem = complete html-tag
     $tag(options) {
-      if (this.$isText()) {
-        return `${this.$value}`
-      }
-      let attr = this.$attr(true, options)
-      if (isStr(attr)) {
-        attr = ` ${attr}`
-      }
-      if (this.$isSelfClosing()) {
-        return `<${this.$element}${attr} />`
-      }
-      return `<${this.$element}${attr}>${this.$str(options)}</${this.$element}>`
+      return this.$link.$tag(options)
     },
-
-    // string of children ($value)
-    $str(options) {
-      if (!this.$hasChildren()) {
-        return `${this.$value}`
-      }
-      let children = []
-      each(this.$value, (child) => {
-        children.push(child.$tag(options))
-      })
-      return children.join('')
-    }
+    $attr(asString, options) { // { router: false , attr: { class: 'link-class' } }
+      return this.$link.$attr(asString, options)
+    },
   }
-
-  //const type = has(obj, 'elem') ? obj.elem : 'text'
-  const data = {
-    $type: 'node'
+  
+  let data = {
+    $type: 'node',
+    $meta: obj.meta,
+    $link: createHtmlLink(obj),
   }
-  if (has(obj, 'elem')) {
-    data.$element = `${obj.elem}`.toLowerCase().trim()
+  data.$meta.home = toBool(data.$meta.home)
+  if (has(obj, 'translations')) {
+    data.$translations = {}
+    each(obj.translations, (link, lang) => {
+      data.$translations[lang] = createHtmlLink(link)
+    })
   }
-  if (has(obj, 'attr')) {
-    data.$attributes = obj.attr
+  if (has(obj, 'value')) {
+    data = { ...data, ...obj.value }
   }
-  data.$value = obj.value
   return toObj(base, functions, data)
 }

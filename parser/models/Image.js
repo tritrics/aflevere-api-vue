@@ -1,6 +1,6 @@
 import { extendObj } from '../../fnlib'
 import { createFile } from './File.js'
-import { createThumb } from '../../images'
+import { createThumb } from '../../image'
 
 export function createImage(obj) {
   const field = createFile(obj)

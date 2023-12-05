@@ -1,7 +1,6 @@
-import { has, isObj, isStr, isFunc } from '../fnlib'
+import { has, each, isObj, isStr, isFunc, unset } from '../fnlib'
 import Request from './Request'
 import OptionsWrapper from './Options'
-import { subscribe } from '../events'
 import { version } from '../../../package.json'
 
 /**
@@ -24,7 +23,12 @@ export const VERSION = version
  * 3. createRequest().limit(5).fields(...)[...]
  */
 
-export let Options = new OptionsWrapper()
+export let Options = null
+
+/**
+ * very simple mini event bus for communication between Plugins
+ */
+const events = {}
 
 /**
  * Create default options
@@ -64,52 +68,82 @@ export async function getNodes(node, params, callback) {
 /**
  * Generic request
  */
-export async function call(node, data) {
+export async function apiCall(node, data) {
   return await createRequest().call(node, data)
 }
 
-function setLang(lang) {
-  if (isStr(lang, 1)) {
-    Options.setLang(lang)
+/**
+ * subcribe to an event
+ */
+export function subscribe(event, callback) {
+  if (isStr(event) && isFunc(callback)) {
+    if (!has(events, event)) {
+      events[event] = []
+    }
+    events[event].push(callback)
   }
+}
+
+/**
+ * dispatch an event
+ */
+export function publish(event, payload = null) {
+   if (isStr(event) && has(events, event)) {
+    each(events[event], (callback) => {
+      callback(payload)
+    })
+   }
+}
+
+export function getPluginName(options, name) {
+  if (has(options, 'pluginName') && isStr(options.pluginName, 1)) {
+    const customName = options.pluginName
+    unset(options, 'pluginName')
+    return customName
+  }
+  return name
 }
 
 /**
  * register the plugin
  */
-export async function createApi(params) {
+export function createApi(params) {
+  const pluginName = getPluginName(params, 'api')
+  Options = new OptionsWrapper()
   if (isObj(params)) {
     defineConfig(params)
-    subscribe('on-changed-lang', setLang)
 
-    /**
-     * Register parser-function in options
-     */
+    // Language setter for event on-changed-lang, if i18n plugin exists
+    subscribe('on-changed-lang', (lang) => {
+      if (isStr(lang, 1)) {
+        Options.setLang(lang)
+      }
+    })
+
+    // register parser
     if (has(params, 'parser') && isFunc(params.parser)) {
       const parser = params.parser()
       Options.setParser(parser)
     }
-
-    /**
-     * Register i18n language-getter in Options
-     * i18n function initializes and returns a getter for language
-     * after defineConfig, because i18n uses options to request info
-     */
-    if (has(params, 'lang') && isFunc(params.lang)) {
-      await params.lang()
-    }
   }
+
+  // register plugin
   return {
-    install(app) {
-      app.config.globalProperties.$api = {
+    install(app, options) {
+      app.config.globalProperties[`$${pluginName}`] = {
+        APIVERSION,
+        VERSION,
+        Options,
         defineConfig,
         createRequest,
         getInfo,
-        getNodes,
         getNode,
-        call,
-        VERSION,
+        getNodes,
+        apiCall,
+        subscribe,
+        publish,
       }
-    },
+      app.provide(pluginName, app.config.globalProperties[`$${pluginName}`])
+    }
   }
 }

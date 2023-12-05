@@ -1,10 +1,9 @@
 import isStr from './isStr'
+import regEsc from './regEsc'
 
 export default function rtrim(val, chars = ' ') {
-  if (isStr(val, 1)) {
-    while (chars.includes(val.charAt(val.length - 1))) {
-      val = val.substring(0, val.length - 1)
-    }
+  if (isStr(val)) {
+    return val.replace(new RegExp(`${regEsc(chars)}+$`), '')
   }
-  return val
+  return ''
 }
