@@ -11,6 +11,7 @@ const OptionsWrapper = class {
     order: 'asc',
     raw: false,
     sleep: 0,
+    multilang: true, // multilang is only set to false by i18n-plugin
   }
 
   constructor(params = {}) {
@@ -39,7 +40,7 @@ const OptionsWrapper = class {
   }
 
   getLang() {
-    return this.#params.lang
+    return this.#params.multilang ? this.#params.lang : null
   }
 
   getFields() {
@@ -148,6 +149,10 @@ const OptionsWrapper = class {
     } else {
       this.#params.sleep = 1
     }
+  }
+
+  setMultilang(val) {
+    this.#params.multilang = toBool(val)
   }
 
   /**

@@ -1,12 +1,12 @@
 import { ref } from 'vue'
-import { each, trim, lower, has, isObj, toBool } from '../fnlib'
-import { getInfo, hasPlugin, publish, parse } from '../api'
+import { each, trim, lower, has, isStr, toBool } from '../fnlib'
+import { getInfo, publish, parse } from '../api'
 
 /**
  * multilang sites have at least one language and the Kirby config
  * "languages" is true.
  */
-const multilang = ref(false)
+const multilang = ref(null)
 
 /**
  * urrent selected lang
@@ -21,7 +21,7 @@ const data = ref({})
 /**
  * INTERN lookup, lang => { locale: 'de_DE', default: true }
  */
-const langMap = {}
+let langMap = {}
 
 /**
  */
@@ -59,62 +59,40 @@ export function getLanguages() {
 
 /**
  */
-export function getDefaultLanguage() {
-  for (let lang in langMap) {
-    if (langMap[lang].default) {
-      return lang
+export function detectLanguage(getUser = true, getDefault = true) {
+  let res = null
+  if (getUser) {
+    for (let i = 0; i < navigator.languages.length; i++) {
+      let lang = navigator.languages[i].toLowerCase().split('-').shift()
+      if (isValidLanguage(lang)) {
+        res = lang
+        break
+      }
     }
-  }
-  return null
-}
-
-/**
- */
-export function getUserLanguage() {
-  for (let i = 0; i < navigator.languages.length; i++) {
-    let lang = navigator.languages[i].toLowerCase().split('-').shift()
-    if (isValidLanguage(lang)) {
-      return lang
-    }
-  }
-  return null
-}
-
-/**
- * Language setter, can also autodetect language, if flags are given
- * 
- * Language detection doesn't analyse the url, this must be done
- * in the router and eventuelly the router overrides the detected
- * language using isValid() and setLanguage().
- * 
- * Method detects the preferred/fallback language from:
- * 
- * 1. given with options createI18n(lang)
- * 2. detected from browser
- * 3. default language from Kirby
- * 
- * @param string lang
- * @param boolean getUser (from Browser)
- * @param boolean getDefault
- * @return string
- */
-export function setLanguage(lang, getUser = false, getDefault = false) {
-  if (!multilang.value || (lang === current.value && isValidLanguage(lang))) {
-    return current.value
-  }
-  let res = lower(trim(lang))
-  if (getUser && !isValidLanguage(res)) {
-    res = getUserLanguage()
   }
   if (getDefault && !isValidLanguage(res)) {
-    res = getDefaultLanguage()
+    for (let lang in langMap) {
+      if (langMap[lang].default) {
+        res = lang
+        break
+      }
+    }
   }
-  if (isValidLanguage(res)) {
-    current.value = res
-    publish('on-changed-lang', current.value)
-    publish('on-changed-locale', langMap[current.value].locale)
+  return res
+}
+
+/**
+ */
+export function setLanguage(lang) {
+  if (isMultilang()) {
+    let res = lower(trim(lang))
+    if (isValidLanguage(res) && (res !== current.value || init)) {
+      current.value = res
+      publish('on-changed-lang', current.value)
+      publish('on-changed-locale', langMap[current.value].locale)
+    }
   }
-  return current.value
+  return current.language
 }
 
 /**
@@ -123,15 +101,18 @@ export function setLanguage(lang, getUser = false, getDefault = false) {
 async function requestLanguages() {
   const json = await getInfo({ raw: true })
   multilang.value = toBool(json.body.meta.multilang)
-  if (multilang.value) {
+  if (isMultilang()) {
     each(json.body.value.languages.value, (props, lang) => {
       langMap[lang] = {
         locale: props.meta.locale,
         default: toBool(props.meta.default)
       }
     })
+  } else {
+    langMap = {}
   }
   data.value = parse(json) // parse does nothing if not parser exists
+  publish('on-changed-multilang', multilang.value)
   publish('on-changed-languages', getLanguages())
 }
 
@@ -144,7 +125,8 @@ export function createI18n(params) {
     name: 'i18n',
     init: async () => {
       await requestLanguages()
-      setLanguage(null, true, true)
+      const detected = detectLanguage()
+      setLanguage(detected)
     },
     export: {
       isMultilang,
@@ -152,10 +134,9 @@ export function createI18n(params) {
       isLanguage,
       getData,
       getLanguage,
-      getDefaultLanguage,
-      getUserLanguage,
       getLanguages,
       setLanguage,
+      detectLanguage,
     }
   }
 }

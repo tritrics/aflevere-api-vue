@@ -118,10 +118,12 @@ export async function publish(event, payload = null) {
   }
 }
 
-
-
 function setLang(lang) {
   Options.setLang(lang)
+}
+
+function setMultilang(multilang) {
+  Options.setMultilang(multilang)
 }
 
 /**
@@ -149,6 +151,7 @@ export async function createApi(params) {
     defineConfig(params)
   }
   subscribe('on-changed-lang', setLang)
+  subscribe('on-changed-multilang', setMultilang)
 
 
   /**
