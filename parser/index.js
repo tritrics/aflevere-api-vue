@@ -23,7 +23,27 @@ import { createText } from './models/Text'
 import { createTime } from './models/Time'
 import { createUser } from './models/User'
 
-export let Options = new OptionsWrapper()
+/**
+ * Options
+ */
+
+const Options = new OptionsWrapper()
+
+export function defineConfig(params) {
+  Options.set(params, true)
+}
+
+export function getOption(path, params) {
+  return Options.get(path, params)
+}
+
+export function setOption(params, reset = false) {
+  Options.set(params, reset)
+}
+
+/**
+ * Parser
+ */
 
 function parseNodes(nodes) {
   let res = {}
@@ -123,29 +143,16 @@ function parseValue(node) {
   return node
 }
 
-/**
- * is parsable field
- */
 function isField(nodes) {
   return has(nodes, 'type') && (has(nodes, 'value') || nodes.type === 'page')
 }
 
-/**
- * is parsable (complete) response
- */
 function isResponse(nodes) {
   return has(nodes, 'body')
 }
 
-/**
- * Create or change default options
- */
-export function defineConfig() {
-  Options.set(...arguments)
-}
-
-export function getOption() {
-  return Options.get(...arguments)
+function setLocale(locale) {
+  Options.setLocale(locale)
 }
 
 export function parseResponse(json) {
@@ -157,21 +164,23 @@ export function parseResponse(json) {
   return {}
 }
 
-export function setLocale(locale) {
-  if(isStr(locale) && /^[a-z]{2,}[-]{1,}[A-Z]{2,}$/.test(locale)) {
-    Options.set({ global: { locale: locale }})
-  }
-}
-
 /**
- * Returning the plugin factory function
+ * Plugin
  */
-export function createParser(options) {
-  return () => {
-    if (isObj(options)) {
-      defineConfig(options)
+export function createParser(params) {
+  defineConfig(params)
+  return {
+    id: 'avlevere-api-vue-parser-plugin',
+    name: 'parser',
+    init: () => {
+      subscribe('on-changed-locale', setLocale)
+    },
+    parse: parseResponse,
+    export: {
+      defineConfig,
+      getOption,
+      setOption,
+      parseResponse,
     }
-    subscribe('on-changed-locale', setLocale)
-    return parseResponse
   }
 }

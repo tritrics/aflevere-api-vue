@@ -1,4 +1,4 @@
-import { each, has, clone, merge, isObj } from '../fnlib'
+import { each, has, clone, merge, isObj, isStr } from '../fnlib'
 
 const OptionsWrapper = class {
   #params = {
@@ -69,6 +69,12 @@ const OptionsWrapper = class {
         })
       }
     })
+  }
+
+  setLocale(locale) {
+    if(isStr(locale) && /^[a-z]{2,}[-]{1,}[A-Z]{2,}$/.test(locale)) {
+      this.set({ global: { locale: locale }})
+    }
   }
 
   /**

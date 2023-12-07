@@ -1,4 +1,5 @@
 import { isObj, toPath, isUrl } from '../fnlib'
+import { parse } from './index'
 
 class ApiError extends Error {
   constructor(msg, status, url, ...params) {
@@ -79,8 +80,7 @@ const Request = class {
       this.Options.getVersion(),
       'info'
     )
-    const json = await this.apiRequest(url)
-    return this.getResult(json)
+    return await this.apiRequest(url)
   }
 
   async node(node) {
@@ -95,8 +95,7 @@ const Request = class {
       fields: this.Options.getFields(),
       sleep: this.Options.getSleep(),
     }
-    const json = await this.apiRequest(url, data)
-    return this.getResult(json)
+    return await this.apiRequest(url, data)
   }
 
   async nodes(node) {
@@ -114,8 +113,7 @@ const Request = class {
       fields: this.Options.getFields(),
       sleep: this.Options.getSleep(),
     }
-    const json = await this.apiRequest(url, data)
-    return this.getResult(json)
+    return await this.apiRequest(url, data)
   }
 
   async call(node, data) {
@@ -124,20 +122,12 @@ const Request = class {
       this.Options.getVersion(),
       node
     )
-    const json = await this.apiRequest(url, data, false) // never parse, raw
-    return this.getResult(json)
+    return await this.apiRequest(url, data, false) // never parse, raw
   }
 
   /**
    * Helper
    */
-
-  getResult(json) {
-    if (this.Options.hasParser() && !this.Options.getRaw()) {
-      return this.Options.parser(json)
-    }
-    return json
-  }
 
   getUrl(...args) {
     const res = toPath(...args)
@@ -168,7 +158,7 @@ const Request = class {
         const status = json.status || response.statusText
         throw new ApiError(`API reports an error: ${msg}`, status, url)
       }
-      return json
+      return this.Options.getRaw() ? json : parse(json) // parse does nothing, if no parser loaded
     } catch (E) {
       if (E instanceof ApiError) throw E
       throw new ApiError(E.message ?? 'Unknown fatal error', E.cause ?? 500, url)

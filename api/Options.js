@@ -1,5 +1,5 @@
 import { APIVERSION } from './index.js'
-import { each, has, trim, lower, isArr, isBool, isFunc, isInt, isObj, isStr, toBool, upperFirst } from '../fnlib'
+import { each, has, trim, lower, isArr, isBool, isInt, isObj, isStr, toBool, upperFirst } from '../fnlib'
 
 const OptionsWrapper = class {
   #params = {
@@ -23,8 +23,6 @@ const OptionsWrapper = class {
       clone.set(structuredClone(this.#params))
     }
     clone.set(params)
-    clone.parser = this.parser
-    clone.i18n = this.i18n
     return clone
   }
 
@@ -150,21 +148,6 @@ const OptionsWrapper = class {
     } else {
       this.#params.sleep = 1
     }
-  }
-
-  /**
-   * Plugin: parser
-   */
-  parser = null // contains parse function
-
-  setParser(parser) {
-    if(isFunc(parser)) {
-      this.parser = parser
-    }
-  }
-
-  hasParser() {
-    return isFunc(this.parser)
   }
 
   /**

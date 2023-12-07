@@ -1,6 +1,5 @@
 import { ref } from 'vue'
-import { each, trim, lower, has, isObj, toBool } from '../fnlib'
-import { getNode, Options, subscribe, getPluginName } from '../api'
+import { getNode, parse, publish, subscribe } from '../api'
 
 /**
  * original response data, parsed or not
@@ -12,25 +11,27 @@ const data = ref({})
  */
 async function requestSite() {
   const json = await getNode('/', { raw: true })
-  if (Options.hasParser()) {
-    data.value = Options.parser(json)
-  } else {
-    data.value = json
-  }
+  data.value = parse(json) // parse does nothing if not parser exists
+  publish('on-changed-site', data)
 }
 
-export async function createSite(params) {
-  const pluginName = getPluginName(params, 'site')
-  subscribe('on-changed-lang', requestSite)
-  await requestSite()
+export function getData() {
+  return data.value
+} 
 
-  // register Plugin
+/**
+ * Plugin
+ */
+export function createSite(params) {
   return {
-    install(app, options) {
-      app.config.globalProperties[`$${pluginName}`] = {
-        siteData: data,
-      }
-      app.provide(pluginName, app.config.globalProperties[`$${pluginName}`])
+    id: 'avlevere-api-vue-site-plugin',
+    name: 'site',
+    init: async () => {
+      await requestSite()
+      subscribe('on-changed-lang', requestSite)
+    },
+    export: {
+      getData,
     }
   }
 }

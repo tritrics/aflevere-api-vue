@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 import { each, trim, lower, has, isObj, toBool } from '../fnlib'
-import { getInfo, Options, publish, getPluginName } from '../api'
+import { getInfo, hasPlugin, publish, parse } from '../api'
 
 /**
  * multilang sites have at least one language and the Kirby config
@@ -41,6 +41,10 @@ export function isValidLanguage(lang) {
   return has(langMap, lang)
 }
 
+export function getData() {
+  return data.value
+}
+
 /**
  */
 export function getLanguage() {
@@ -50,11 +54,7 @@ export function getLanguage() {
 /**
  */
 export function getLanguages() {
-  if (Options.hasParser()) {
-    return data.value.languages
-  } else {
-    return data.value.body.value.languages.value
-  }
+  return has(data.value, '$type') ? data.value.languages : data.value.body.value.languages.value
 }
 
 /**
@@ -131,38 +131,31 @@ async function requestLanguages() {
       }
     })
   }
-  if (Options.hasParser()) {
-    data.value = Options.parser(json)
-  } else {
-    data.value = json
-  }
+  data.value = parse(json) // parse does nothing if not parser exists
+  publish('on-changed-languages', getLanguages())
 }
 
 /**
- * Returning the plugin factory function
+ * Plugin
  */
-export async function createI18n(params, namespace) {
-  const pluginName = getPluginName(params, 'i18n')
-
-  // request all languages and set default
-  await requestLanguages()
-  setLanguage(null, true, true)
-
-  // register Plugin
+export function createI18n(params) {
   return {
-    install(app, options) {
-      app.config.globalProperties[`$${pluginName}`] = {
-        isMultilang,
-        isValidLanguage,
-        isLanguage,
-        getLanguage,
-        getDefaultLanguage,
-        getUserLanguage,
-        getLanguages,
-        setLanguage,
-        infoData: data,
-      }
-      app.provide(pluginName, app.config.globalProperties[`$${pluginName}`])
+    id: 'avlevere-api-vue-i18n-plugin',
+    name: 'i18n',
+    init: async () => {
+      await requestLanguages()
+      setLanguage(null, true, true)
+    },
+    export: {
+      isMultilang,
+      isValidLanguage,
+      isLanguage,
+      getData,
+      getLanguage,
+      getDefaultLanguage,
+      getUserLanguage,
+      getLanguages,
+      setLanguage,
     }
   }
 }
