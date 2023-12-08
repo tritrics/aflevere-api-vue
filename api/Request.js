@@ -83,6 +83,16 @@ const Request = class {
     return await this.apiRequest(url)
   }
 
+  async language(lang) {
+    const url = this.getUrl(
+      this.Options.getHost(),
+      this.Options.getVersion(),
+      'language',
+      this.Options.getLang(lang)
+    )
+    return await this.apiRequest(url)
+  }
+
   async node(node) {
     const url = this.getUrl(
       this.Options.getHost(),

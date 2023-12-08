@@ -52,6 +52,13 @@ export async function getInfo(params, callback) {
 }
 
 /**
+ * request info
+ */
+export async function getLanguage(lang, params, callback) {
+  return await createRequest(params, callback).language(lang)
+}
+
+/**
  * request node
  */
 export async function getNode(node, params, callback) {
@@ -150,7 +157,7 @@ export async function createApi(params) {
     unset(params, 'pluginName')
     defineConfig(params)
   }
-  subscribe('on-changed-lang', setLang)
+  subscribe('on-changed-langcode', setLang)
   subscribe('on-changed-multilang', setMultilang)
 
 

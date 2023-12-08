@@ -39,8 +39,11 @@ const OptionsWrapper = class {
     return this.#params.host
   }
 
-  getLang() {
-    return this.#params.multilang ? this.#params.lang : null
+  getLang(lang) {
+    if (!this.#params.multilang) {
+      return null
+    }
+    return isStr(lang, 1) ? lang : this.#params.lang
   }
 
   getFields() {

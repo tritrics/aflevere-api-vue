@@ -108,8 +108,6 @@ function parseField(node) {
       return createMarkdown(node)
     case 'node':
       return createNode(parseValue(node))
-    case 'nodes':
-      return createNodes(parseValue(node))
     case 'number':
       return createNumber(node)
     case 'option':
