@@ -1,8 +1,8 @@
 import { has, each, isStr, toObj, toBool } from '../../fnlib'
 import base from './Base'
-import { createHtmlLink } from './HtmlLink'
+import { createLink } from './Link'
 
-export function createNode(obj) {
+export function createPage(obj) {
   const functions = {
     $val() {
       return this.$meta.slug
@@ -19,15 +19,15 @@ export function createNode(obj) {
   }
   
   let data = {
-    $type: 'node',
+    $type: 'page',
     $meta: obj.meta,
-    $link: createHtmlLink(obj),
+    $link: createLink(obj),
   }
   data.$meta.home = toBool(data.$meta.home)
   if (has(obj, 'translations')) {
     data.$translations = {}
     each(obj.translations, (link, lang) => {
-      data.$translations[lang] = createHtmlLink(link)
+      data.$translations[lang] = createLink(link)
     })
   }
   if (has(obj, 'value')) {

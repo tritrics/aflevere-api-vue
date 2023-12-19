@@ -1,6 +1,7 @@
 import { has, each, isArr, inArr, isStr, toBool, toObj, attrToStr } from '../../fnlib'
 import base from './Base'
 import { getOption } from '../index'
+import { getLinkAttributes } from './Link'
 
 const selfClosing = ['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source', 'track', 'wbr']
 
@@ -29,9 +30,13 @@ export function createHtmlNode(obj) {
 
     // attributes as string or object
     $attr(asString, options) {
-      const add = getOption('html.attr', options)
-      const attr = { ...(this.$attributes || {}), ...(add[this.$element] || {}) }
-      return toBool(asString) ? attrToStr(attr) : attr
+      if (this.$isLink()) {
+        return getLinkAttributes(this.$element, this.$attributes, asString, options)
+      } else {
+        const add = getOption('html.attr', options)
+        const attr = { ...(this.$attributes || {}), ...(add[this.$element] || {}) }
+        return toBool(asString) ? attrToStr(attr) : attr
+      }
     },
 
     // string including this elem = complete html-tag

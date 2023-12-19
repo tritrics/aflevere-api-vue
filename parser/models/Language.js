@@ -1,6 +1,6 @@
 import { has, toBool, toObj } from '../../fnlib'
 import base from './Base'
-import { createHtmlLink } from './HtmlLink'
+import { createLink } from './Link'
 
 export function createLanguage(obj) {
   const functions = {
@@ -27,7 +27,7 @@ export function createLanguage(obj) {
   let data = {
     $type: 'language',
     $meta: obj.meta,
-    $link: createHtmlLink(obj),
+    $link: createLink(obj),
   }
   data.$meta.default = toBool(data.$meta.default)
   if (has(obj, 'terms')) {

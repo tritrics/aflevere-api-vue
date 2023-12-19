@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import { getNode, parse, publish, subscribe } from '../api'
+import { getPage, parse, publish, subscribe } from '../api'
 
 /**
  * original response data, parsed or not
@@ -10,7 +10,7 @@ const data = ref({})
  * init / request site
  */
 async function requestSite(code) {
-  const json = await getNode('/', { raw: true })
+  const json = await getPage('/', { raw: true })
   data.value = parse(json) // parse does nothing if not parser exists
   publish('on-changed-site', data)
 }

@@ -23,7 +23,7 @@ export const VERSION = version
  * by defineConfig(). Default Options are used for every request.
  * 
  * Default options can be optionally overwritten for a single request in three ways:
- * 1. getNode(node, {Object} options)
+ * 1. getPage(node, {Object} options)
  * 2. createRequest({Object} options)[...]
  * 3. createRequest().limit(5).fields(...)[...]
  */
@@ -61,15 +61,15 @@ export async function getLanguage(lang, params, callback) {
 /**
  * request node
  */
-export async function getNode(node, params, callback) {
-  return await createRequest(params, callback).node(node)
+export async function getPage(node, params, callback) {
+  return await createRequest(params, callback).page(node)
 }
 
 /**
  * request nodes
  */
-export async function getNodes(node, params, callback) {
-  return await createRequest(params, callback).nodes(node)
+export async function getPages(node, params, callback) {
+  return await createRequest(params, callback).pages(node)
 }
 
 /**
@@ -205,8 +205,8 @@ export async function createApi(params) {
         defineConfig,
         createRequest,
         getInfo,
-        getNode,
-        getNodes,
+        getPage,
+        getPages,
         apiCall,
         createThumb,
         hasPlugin,

@@ -1,6 +1,6 @@
 import { has, isStr, toObj } from '../../fnlib'
 import base from './Base'
-import { createHtmlLink } from './HtmlLink'
+import { createLink } from './Link'
 
 export function createFile(obj) {
   const functions = {
@@ -21,7 +21,7 @@ export function createFile(obj) {
   let data = {
     $type: 'file',
     $meta: obj.meta,
-    $link: createHtmlLink(obj),
+    $link: createLink(obj),
   }
   if (has(obj, 'value')) {
     data = { ...data, ...obj.value }

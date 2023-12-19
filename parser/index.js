@@ -3,18 +3,18 @@ import { subscribe } from '../api'
 import OptionsWrapper from './Options'
 import { createBoolean } from './models/Boolean'
 import { createBlock } from './models/Block'
+import { createColor } from './models/Color'
 import { createDate } from './models/Date'
 import { createDateTime } from './models/DateTime'
 import { createFile } from './models/File'
 import { createHtml } from './models/Html'
 import { createImage } from './models/Image'
 import { createInfo } from './models/Info'
-import { createHtmlLink } from './models/HtmlLink'
 import { createLanguage } from './models/Language'
 import { createLanguages } from './models/Languages'
+import { createLink } from './models/Link'
 import { createMarkdown } from './models/Markdown'
-import { createNode } from './models/Node'
-import { createNodes } from './models/Nodes'
+import { createPage } from './models/Page'
 import { createNumber } from './models/Number'
 import { createOption } from './models/Option'
 import { createSite } from './models/Site'
@@ -84,14 +84,14 @@ function parseField(node) {
       return createBlock(parseValue(node))
     case 'boolean':
       return createBoolean(node)
+    case 'color':
+      return createColor(node)
     case 'date':
       return createDate(node)
     case 'datetime':
       return createDateTime(node)
     case 'email':
-    case 'tel':
-    case 'url':
-      return createHtmlLink(node)
+      return createLink(node)
     case 'file':
       return createFile(parseValue(node))
     case 'html':
@@ -104,20 +104,26 @@ function parseField(node) {
       return createLanguage(node)
     case 'languages':
       return createLanguages(parseValue(node))
+    case 'link':
+      return createLink(node)
     case 'markdown':
       return createMarkdown(node)
-    case 'node':
-      return createNode(parseValue(node))
+    case 'page':
+      return createPage(parseValue(node))
     case 'number':
       return createNumber(node)
     case 'option':
       return createOption(node)
     case 'site':
       return createSite(parseValue(node))
+    case 'tel':
+      return createLink(node)
     case 'text':
       return createText(node)
     case 'time':
       return createTime(node)
+    case 'url':
+      return createLink(node)
     case 'user':
       return createUser(parseValue(node))
     default:

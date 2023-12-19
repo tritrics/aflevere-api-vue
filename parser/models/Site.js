@@ -1,6 +1,6 @@
 import { has, isStr, toObj } from '../../fnlib'
 import base from './Base'
-import { createHtmlLink } from './HtmlLink'
+import { createLink } from './Link'
 
 export function createSite(obj) {
   const functions = {
@@ -15,7 +15,7 @@ export function createSite(obj) {
   let data = {
     $type: 'site',
     $meta: obj.meta,
-    $home: createHtmlLink(obj),
+    $home: createLink(obj),
   }
   if (has(obj, 'value')) {
     data = { ...data, ...obj.value }

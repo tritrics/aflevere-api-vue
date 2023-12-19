@@ -93,11 +93,11 @@ const Request = class {
     return await this.apiRequest(url)
   }
 
-  async node(node) {
+  async page(node) {
     const url = this.getUrl(
       this.Options.getHost(),
       this.Options.getVersion(),
-      'node',
+      'page',
       this.Options.getLang(),
       node
     )
@@ -108,11 +108,11 @@ const Request = class {
     return await this.apiRequest(url, data)
   }
 
-  async nodes(node) {
+  async pages(node) {
     const url = this.getUrl(
       this.Options.getHost(), 
       this.Options.getVersion(),
-      'nodes',
+      'pages',
       this.Options.getLang(),
       node
     )
