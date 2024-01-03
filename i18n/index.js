@@ -107,7 +107,7 @@ export function detectLanguage(getUser = true, getDefault = true) {
 
 /**
  */
-export async function setLanguage(lang) {
+export async function setLanguage(lang, init = false) {
   if (isMultilang()) {
     let res = lower(trim(lang))
     if (isValidLanguage(res) && (res !== data.value.current || init)) {
