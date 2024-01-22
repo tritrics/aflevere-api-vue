@@ -1,24 +1,23 @@
 import { has, unset, each, isObj, isStr, isFunc, inArr, sanArr } from '../fnlib'
 import Thumb from './Thumb'
 import Request from './Request'
-import OptionsWrapper from './Options'
+import RequestOptions from './Options'
 import { version } from '../../../package.json'
 
 /**
- * The API interface version
+ * The API interface version.
+ * Same as defined in Kirby-Plugin and required for all requests.
  */
 export const APIVERSION = 'v1'
 
 /**
- * The tool version
+ * The Plugin version.
  */
 export const VERSION = version
 
 /**
  * Options
- */
-
-/**
+ * 
  * Default options are defined on initialisation by createApi() or separately 
  * by defineConfig(). Default Options are used for every request.
  * 
@@ -27,62 +26,96 @@ export const VERSION = version
  * 2. createRequest({Object} options)[...]
  * 3. createRequest().limit(5).fields(...)[...]
  */
-
-let Options = new OptionsWrapper()
+let Options = new RequestOptions()
 
 /**
- * Create default options
+ * Create (default) options for all requests.
+ * 
+ * @param {object} params the options to set
+ * @param {boolean} reset replace all existing settings instead of merging
  */
 export function defineConfig(params, reset = false) {
   Options = Options.clone(params, reset)
 }
 
 /**
- * Create a request object for use with chainging-functions
+ * Create a request object for use with chainging-functions.
+ * 
+ * @param {object} params optionally overwrite or amend default options
+ * @returns {Request}
  */
-export function createRequest(params, callback) {
-  return new Request(Options.clone(params), callback)
+export function createRequest(params = {}) {
+  return new Request(Options.clone(params))
 }
 
 /**
- * request info
+ * Call API interface /info.
+ * Returns global information about the site.
+ * 
+ * @param {object} params optionally overwrite or amend default options
+ * @returns {object} json
  */
-export async function getInfo(params, callback) {
-  return await createRequest(params, callback).info()
+export async function getInfo(params = {}) {
+  return await createRequest(params).info()
 }
 
 /**
- * request info
+ * Call API interface /language/(:any).
+ * Returns information from a single language.
+ * 
+ * @param {string} lang 2-char language code
+ * @param {object} params optionally overwrite or amend default options
+ * @returns {object} json
  */
-export async function getLanguage(lang, params, callback) {
-  return await createRequest(params, callback).language(lang)
+export async function getLanguage(lang, params = {}) {
+  return await createRequest(params).language(lang)
 }
 
 /**
- * request node
+ * Call API interface /page/(:all?).
+ * Returns information of a single page or site (if node is empty).
+ * 
+ * @param {string} path the path to the page
+ * @param {object} params optionally overwrite or amend default options
+ * @returns {object} json
  */
-export async function getPage(node, params, callback) {
-  return await createRequest(params, callback).page(node)
+export async function getPage(path, params = {}) {
+  return await createRequest(params).page(path)
 }
 
 /**
- * request nodes
+ * Call API interface /pages/(:all?).
+ * Returns information of sub-pages of a single page or site (if node is empty).
+ * 
+ * @param {string} path the path to the parent page
+ * @param {object} params optionally overwrite or amend default options
+ * @returns {object} json
  */
-export async function getPages(node, params, callback) {
-  return await createRequest(params, callback).pages(node)
+export async function getPages(path, params = {}) {
+  return await createRequest(params).pages(path)
 }
 
 /**
- * Generic request
+ * Generic API-request
+ * 
+ * @param {string} path
+ * @param {object} data post-data
+ * @param {object} params optionally overwrite or amend default options
+ * @returns {object} json
  */
-export async function apiCall(node, data) {
-  return await createRequest().call(node, data)
+export async function apiCall(path, data = {}, params = {}) {
+  return await createRequest(params).call(path, data)
 }
 
 /**
- * Image handling
+ * Create a Thumb instance with handy image resizing and handling methods.
+ * 
+ * @param {object} image the image object/node from response
+ * @param {integer} width the thumb width in px
+ * @param {integer} height the thumb height in px
+ * @param {object} options the thumb's options
+ * @returns {Thumb}
  */
-
 export function createThumb(image, width = null, height = null, options = {}) {
   let meta = {}
   if (has(image, '$meta')) { // parser object given
@@ -104,10 +137,16 @@ export function createThumb(image, width = null, height = null, options = {}) {
 }
 
 /**
- * very simple mini event bus for communication between Plugins
+ * Simple and basic event bus for communication between Plugins.
  */
 const registeredEvents = {}
 
+/**
+ * Subscribe to an event.
+ * 
+ * @param {string} event the name of the event
+ * @param {function} callback the callback-function when event is triggered
+ */
 export function subscribe(event, callback) {
   if (isStr(event) && isFunc(callback)) {
     if (!has(registeredEvents, event)) {
@@ -117,6 +156,12 @@ export function subscribe(event, callback) {
   }
 }
 
+/**
+ * Trigger an event.
+ * 
+ * @param {string} event the name of the event
+ * @param {mixed} payload any optional data wich is sent to the callback-function
+ */
 export async function publish(event, payload = null) {
   if (has(registeredEvents, event)) {
     for (let i = 0; i < registeredEvents[event].length; i++) {
@@ -125,28 +170,71 @@ export async function publish(event, payload = null) {
   }
 }
 
+/**
+ * Internally used function to set the language in Options.
+ * 
+ * @param {string} lang 2-char language code
+ */
 function setLang(lang) {
   Options.setLang(lang)
 }
 
+/**
+ * Internally used function to "inform" Options that this is a multilang installation.
+ * 
+ * @param {boolean} multilang 
+ */
 function setMultilang(multilang) {
   Options.setMultilang(multilang)
 }
 
 /**
- * Plugin
+ * Registered plugins as given with createApi(params)
+ * Plugins here mean: Plugins of the API-Plugin.
  */
 const registeredPlugins = []
 
+/**
+ * Check if a plugin given by it's name is exists.
+ * 
+ * @param {string} name 
+ * @returns {boolean}
+ */
 export function hasPlugin(name) {
   return inArr(name, registeredPlugins)
 }
 
 /**
- * default parser function, is overwritten by parser
+ * Default parser function doing nothing.
+ * Function is replaced by the parser-plugin.
+ * 
+ * @param {object} json 
+ * @returns {object}
  */
 export let parse = (json) => json 
 
+/**
+ * Creating the Vue-Plugin.
+ * 
+ * Params should at least contain the host (url of the Kirby-Installation).
+ * Example:
+ * {
+ *   host: 'http://some-domain.com/public-api',
+ *
+ *   // if multilang installation
+ *   lang: 'de',
+ *
+ *   // register plugins
+ *   plugins: [
+ *    createParser(parserOptions),
+ *    createI18n(),
+ *    createSite(),
+ *  ]
+ * }
+ * 
+ * @param {object} params 
+ * @returns 
+ */
 export async function createApi(params) {
 
   // handle params, init
@@ -160,12 +248,9 @@ export async function createApi(params) {
   subscribe('on-changed-langcode', setLang)
   subscribe('on-changed-multilang', setMultilang)
 
-
-  /**
-   * sort plugins
-   * reserved positions: 0 = parser, 1 = i18n, 2 = site
-   * the rest is user-defined and added in the given order
-   */
+  // sort plugins
+  // reserved positions: 0 = parser, 1 = i18n, 2 = site
+  // the rest is user-defined and added in the given order
   let pluginsSorted = [null, null, null]
   each (plugins, (plugin) => {
     switch(plugin.id) {
@@ -216,9 +301,7 @@ export async function createApi(params) {
       }
       app.provide(pluginName,  app.config.globalProperties[`$${pluginName}`])
 
-      /**
-       * add plugins, usage: $api.site or inject('api.site')
-       */
+      // add plugins, usage: $api.site or inject('api.site')
       each(pluginsSorted, (def) => {
         app.config.globalProperties[`$${pluginName}`][def.name] = def.export
         app.provide(`${pluginName}.${def.name}`, def.export)

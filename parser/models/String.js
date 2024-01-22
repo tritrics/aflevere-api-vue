@@ -2,9 +2,11 @@ import { isObj, has, isStr, isNum, isBool, toBool, toStr, toObj } from '../../fn
 import base from './Base'
 
 /**
+ * Model for all remaining API fields without own model
  * Object can handle all different data types
+ * 
  * @param {mixed} mixed 
- * @returns 
+ * @returns {object}
  */
 export function createString(mixed) {
   let value = (isObj(mixed) && has(mixed, 'value')) ? mixed.value : mixed

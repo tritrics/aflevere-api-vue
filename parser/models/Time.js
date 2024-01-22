@@ -2,6 +2,12 @@ import { toObj, now } from '../../fnlib'
 import { getOption } from '../index'
 import base from './Base'
 
+/**
+ * Model for API field: time
+ *
+ * @param {object} obj the field data
+ * @returns {object}
+ */
 export function createTime(obj) {
   const functions = {
     $isOver() {

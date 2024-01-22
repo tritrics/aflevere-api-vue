@@ -2,6 +2,12 @@ import { extendObj } from '../../fnlib'
 import { createString } from './String.js'
 import { getOption } from '../index'
 
+/**
+ * Model for API field: text
+ *
+ * @param {object} obj the field data
+ * @returns {object}
+ */
 export function createText(obj) {
   const field = createString(obj)
   

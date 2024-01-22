@@ -1,6 +1,12 @@
 import { has, each, isStr, toObj } from '../../fnlib'
 import base from './Base'
 
+/**
+ * Model for API field: languages
+ *
+ * @param {object} obj the field data
+ * @returns {object}
+ */
 export function createLanguages(obj) {
   const functions = {
     $has(code) {

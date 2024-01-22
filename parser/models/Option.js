@@ -2,6 +2,12 @@ import { has, toObj } from '../../fnlib'
 import base from './Base'
 import { createString } from './String'
 
+/**
+ * Model for API field: option
+ *
+ * @param {object} obj the field data
+ * @returns {object}
+ */
 export function createOption(obj) {
   const functions = {}
   

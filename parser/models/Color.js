@@ -1,6 +1,12 @@
 import { toObj, toBool } from '../../fnlib'
 import base from './Base'
 
+/**
+ * Model for API field: color
+ *
+ * @param {object} obj the field data
+ * @returns {object}
+ */
 export function createColor(obj) {
   const functions = {}
   

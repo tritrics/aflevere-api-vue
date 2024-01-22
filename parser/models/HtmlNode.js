@@ -3,8 +3,17 @@ import base from './Base'
 import { getOption } from '../index'
 import { getLinkAttributes } from './Link'
 
+/**
+ * Array with self-closing html nodes
+ */
 const selfClosing = ['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source', 'track', 'wbr']
 
+/**
+ * Subnode of model for field: html
+ * 
+ * @param {object} obj 
+ * @returns {object}
+ */
 export function createHtmlNode(obj) {
   const functions = {
     $isSelfClosing() {

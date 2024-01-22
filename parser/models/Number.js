@@ -2,6 +2,12 @@ import { toNum, isInt, toObj } from '../../fnlib'
 import { getOption } from '../index'
 import base from './Base'
 
+/**
+ * Model for API field: number
+ *
+ * @param {object} obj the field data
+ * @returns {object}
+ */
 export function createNumber(obj) {
   const functions = {
     $isMin(min) {

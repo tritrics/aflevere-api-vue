@@ -2,6 +2,12 @@ import { has, isStr, toObj } from '../../fnlib'
 import base from './Base'
 import { createLink } from './Link'
 
+/**
+ * Model for API field: file
+ *
+ * @param {object} obj the field data
+ * @returns {object}
+ */
 export function createFile(obj) {
   const functions = {
     $val() {

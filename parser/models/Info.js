@@ -1,6 +1,12 @@
 import { has, toBool, isStr, toObj } from '../../fnlib'
 import base from './Base'
 
+/**
+ * Model for API field: info
+ *
+ * @param {object} obj the field data
+ * @returns {object}
+ */
 export function createInfo(obj) {
   const functions = {
     $val() {

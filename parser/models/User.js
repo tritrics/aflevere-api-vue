@@ -1,6 +1,12 @@
 import { has, toObj } from '../../fnlib'
 import base from './Base'
 
+/**
+ * Model for API field: user
+ * 
+ * @param {object} obj the field data
+ * @returns {object}
+ */
 export function createUser(obj) {
   const functions = {
     $val() {

@@ -7,14 +7,19 @@ import { getPage, parse, publish, subscribe } from '../api'
 const data = ref({})
 
 /**
- * init / request site
+ * Init = request site.
  */
-async function requestSite(code) {
+async function requestSite() {
   const json = await getPage('/', { raw: true })
   data.value = parse(json) // parse does nothing if not parser exists
   publish('on-changed-site', data)
 }
 
+/**
+ * Get site's data.
+ * 
+ * @returns {object}
+ */
 export function getData() {
   return data.value
 } 

@@ -2,6 +2,12 @@ import { toObj, now, today } from '../../fnlib'
 import { getOption } from '../index'
 import base from './Base'
 
+/**
+ * Model for API field: datetime
+ *
+ * @param {object} obj the field data
+ * @returns {object}
+ */
 export function createDateTime(obj) {
   const functions = {
     $isPast(includeToday = false) {

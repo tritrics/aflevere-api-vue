@@ -1,6 +1,6 @@
-import { each, has, isArr, isObj, isStr } from '../fnlib'
+import { each, has, isArr, isObj } from '../fnlib'
 import { subscribe } from '../api'
-import OptionsWrapper from './Options'
+import ParserOptions from './Options'
 import { createBoolean } from './models/Boolean'
 import { createBlock } from './models/Block'
 import { createColor } from './models/Color'
@@ -24,27 +24,48 @@ import { createTime } from './models/Time'
 import { createUser } from './models/User'
 
 /**
- * Options
+ * Instance of Options
  */
+const Options = new ParserOptions()
 
-const Options = new OptionsWrapper()
-
+/**
+ * Define/set config/options
+ * 
+ * @param {object} params 
+ */
 export function defineConfig(params) {
   Options.set(params, true)
 }
 
+/**
+ * Get as subnode of Options determined by dot-separated path.
+ * Example: `link.router`
+ * 
+ * @param {string} path a dot-separated path
+ * @param {object} params the user-given options which amends or overrides the returned value
+ * @returns {mixed}
+ */
 export function getOption(path, params) {
   return Options.get(path, params)
 }
 
+/**
+ * Setting or resetting all options at once.
+ * Intern defaults are used if a node is not given.
+ * 
+ * @param {object} params the options to save
+ * @param {boolean} reset replace instead of amend existing options
+ */
 export function setOption(params, reset = false) {
   Options.set(params, reset)
 }
 
 /**
- * Parser
+ * Recoursive function to parse the response from Kirby
+ * 
+ * @param {mixed} nodes 
+ * @returns {object}
  */
-
 function parseNodes(nodes) {
   let res = {}
 
@@ -53,7 +74,7 @@ function parseNodes(nodes) {
 
     // node with type and value
     if (isField(nodes)) {
-      return parseField(nodes)
+      return createModel(nodes)
     }
     
     // node with value
@@ -78,10 +99,17 @@ function parseNodes(nodes) {
   return nodes
 }
 
-function parseField(node) {
+/**
+ * Model factory
+ * Sub-method of parseNodes() creating the model for a given field.
+ * 
+ * @param {object} node
+ * @returns {object}
+ */
+function createModel(node) {
   switch(node.type) {
     case 'block':
-      return createBlock(parseValue(node))
+      return createBlock(createChildModels(node))
     case 'boolean':
       return createBoolean(node)
     case 'color':
@@ -93,29 +121,29 @@ function parseField(node) {
     case 'email':
       return createLink(node)
     case 'file':
-      return createFile(parseValue(node))
+      return createFile(createChildModels(node))
     case 'html':
       return createHtml(node)
     case 'image':
-      return createImage(parseValue(node))
+      return createImage(createChildModels(node))
     case 'info':
-      return createInfo(parseValue(node))
+      return createInfo(createChildModels(node))
     case 'language':
       return createLanguage(node)
     case 'languages':
-      return createLanguages(parseValue(node))
+      return createLanguages(createChildModels(node))
     case 'link':
       return createLink(node)
     case 'markdown':
       return createMarkdown(node)
     case 'page':
-      return createPage(parseValue(node))
+      return createPage(createChildModels(node))
     case 'number':
       return createNumber(node)
     case 'option':
       return createOption(node)
     case 'site':
-      return createSite(parseValue(node))
+      return createSite(createChildModels(node))
     case 'tel':
       return createLink(node)
     case 'text':
@@ -125,45 +153,62 @@ function parseField(node) {
     case 'url':
       return createLink(node)
     case 'user':
-      return createUser(parseValue(node))
+      return createUser(createChildModels(node))
     default:
       
       // also files, object, pages, structure, users, options
       if (isArr(node.value) || isObj(node.value)) {
         return parseNodes(node.value)
-      }
-      
-      // also string
-      else {
+      } else {
         return createString(node) 
       }
   }
 }
 
-function parseValue(node) {
+/**
+ * Create models, when a field has multiple child fields in node `value`.
+ * 
+ * @param {object} node 
+ * @returns {object}
+ */
+function createChildModels(node) {
   if (has(node, 'value')) {
     node.value = parseNodes(node.value)
   }
   return node
 }
 
-function isField(nodes) {
-  return has(nodes, 'type') && (has(nodes, 'value') || nodes.type === 'page')
+/**
+ * Check, if a node is field.
+ * This is the case when it has subnodes `type` and `value` or is of type `page`.
+ * 
+ * @param {object} node
+ * @returns {boolean}
+ */
+function isField(node) {
+  return has(node, 'type') && (has(node, 'value') || node.type === 'page')
 }
 
-function isResponse(nodes) {
-  return has(nodes, 'body')
-}
-
+/**
+ * Change locale in Options.
+ * 
+ * @param {string} locale 
+ */
 function setLocale(locale) {
   Options.setLocale(locale)
 }
 
+/**
+ * Main function to parse json from response.
+ * 
+ * @param {object} json 
+ * @returns {object}
+ */
 export function parseResponse(json) {
-  if (isResponse(json)) {
+  if ( has(json, 'body')) {
     return parseNodes(json.body)
   } else if (isField(json)) {
-    return parseField(json)
+    return createModel(json)
   }
   return {}
 }

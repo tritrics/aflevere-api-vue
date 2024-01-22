@@ -2,6 +2,12 @@ import { has, toBool, toObj } from '../../fnlib'
 import base from './Base'
 import { createLink } from './Link'
 
+/**
+ * Model for API field: language
+ *
+ * @param {object} obj the field data
+ * @returns {object}
+ */
 export function createLanguage(obj) {
   const functions = {
     $isDefault() {

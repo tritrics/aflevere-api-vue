@@ -8,18 +8,18 @@ import { getInfo, getLanguage as getLanguageRequest, publish, parse } from '../a
 const languages = ref({})
 
 /**
- * details of current language like returned from getLanguage()
+ * Details of current language like returned from getLanguage()
  */
 const language = ref({})
 
 /**
- * terms
+ * Terms as (optionally) defined in Kirby's language settings.
  */
 const terms = ref({})
 
 /**
- * INTERN lookup, lang => { locale: 'de_DE', default: true }
- * needed, because languages and language can be parsed and have an unknown structure
+ * INTERN lookup.
+ * Needed, because languages and language may be parsed and have an unknown structure.
  */
 const data = ref({
   multilang: false,
@@ -28,60 +28,95 @@ const data = ref({
 })
 
 /**
+ * Is it a multilanguage site or not.
+ * 
+ * @returns {boolean}
  */
 export function isMultilang() {
   return data.value.multilang === true
 }
 
 /**
+ * Check, if the given language is the current language.
+ * 
+ * @param {string} lang 
+ * @returns {boolean}
  */
 export function isLanguage(lang) {
   return data.value.current === lang
 }
 
 /**
+ * Check, if the given language is valid.
+ * 
+ * @param {string} lang 
+ * @returns {boolean}
  */
 export function isValidLanguage(lang) {
   return has(data.value.map, lang)
 }
 
 /**
+ * Get list with all languages.
+ * 
+ * @returns {object}
  */
 export function getLanguages() {
   return languages.value
 }
 
 /**
+ * Get object with all information from the current language.
+ * 
+ * @returns {object}
  */
 export function getLanguage() {
   return language.value
 }
 
 /**
+ * Get the current 2-chars language code.
+ * 
+ * @returns {string}
  */
 export function getLangcode() {
   return data.value.current
 }
 
 /**
+ * Get locale of current language.
+ * 
+ * @returns {string}
  */
 export function getLocale() {
   return data.value.map[data.value.current].locale
 }
 
 /**
+ * Get a term given by key.
+ * 
+ * @param {string} key 
+ * @returns {string}
  */
 export function getTerm(key) {
   return terms.value[key] || null
 }
 
 /**
+ * Get all terms.
+ * 
+ * @returns {object}
  */
 export function getTerms() {
   return terms.value
 }
 
 /**
+ * Detect the best valid language from browser or settings.
+ * 
+ * @param {boolean} getUser try to get the language from browser
+ * @param {boolean} getDefault get default language like defined in Kirby if detection fails
+ * @returns {string}
  */
 export function detectLanguage(getUser = true, getDefault = true) {
   let res = null
@@ -106,11 +141,15 @@ export function detectLanguage(getUser = true, getDefault = true) {
 }
 
 /**
+ * Setting a language with implicit requesting all language data from Kirby.
+ * 
+ * @param {string} lang 2-chars language code
+ * @returns {string}
  */
-export async function setLanguage(lang, init = false) {
+export async function setLanguage(lang) {
   if (isMultilang()) {
     let res = lower(trim(lang))
-    if (isValidLanguage(res) && (res !== data.value.current || init)) {
+    if (isValidLanguage(res) && (res !== data.value.current)) {
       await requestLanguage(lang)
     }
   }
@@ -118,7 +157,7 @@ export async function setLanguage(lang, init = false) {
 }
 
 /**
- * request all available languages
+ * Request all available languages.
  */
 async function requestLanguages() {
   const json = await getInfo({ raw: true })
@@ -140,7 +179,7 @@ async function requestLanguages() {
 }
 
 /**
- * request single language
+ * Request a single language.
  */
 async function requestLanguage(lang) {
   if (isMultilang()) {

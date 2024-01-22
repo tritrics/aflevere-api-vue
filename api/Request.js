@@ -1,79 +1,127 @@
 import { isObj, toPath, isUrl } from '../fnlib'
 import { parse } from './index'
 
-class ApiError extends Error {
-  constructor(msg, status, url, ...params) {
-    super(...params)
-    if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, ApiError)
-    }
-    this.name = 'ApiError'
-    this.msg = msg
-    this.status = status
-    this.url = url
-  }
-}
-
+/**
+ * Class to handle a single request
+ */
 const Request = class {
+
+  /**
+   * Instance of Options
+   */
   Options
 
-  constructor(_Options) {
-    this.Options = _Options
+  /**
+   * @param {Options} Options 
+   */
+  constructor(Options) {
+    this.Options = Options
   }
 
   /**
-   * Setting single options
+   * Chaining function to set `host`
+   * 
+   * @returns {this}
+   * @see Options
    */
-
-  host() {
-    this.Options.setHost(...arguments)
+  host(host) {
+    this.Options.setHost(host)
     return this
   }
 
-  lang() {
-    this.Options.setLang(...arguments)
+  /**
+   * Chaining function to set `language`
+   * 
+   * @returns {this}
+   * @see Options
+   */
+  lang(code) {
+    this.Options.setLang(code)
     return this
   }
 
+  /**
+   * Chaining function to set `fields`
+   * 
+   * @returns {this}
+   * @see Options
+   */
   fields() {
     this.Options.setFields(...arguments)
     return this
   }
 
+  /**
+   * Chaining function to set `fields` to `all`
+   * 
+   * @returns {this}
+   * @see Options
+   */
   all() {
     this.Options.setFields(true)
     return this
   }
 
-  limit() {
-    this.Options.setLimit(...arguments)
+  /**
+   * Chaining function to set `limit`
+   * 
+   * @returns {this}
+   * @see Options
+   */
+  limit(limit) {
+    this.Options.setLimit(limit)
     return this
   }
 
-  page() {
-    this.Options.setPage(...arguments)
+  /**
+   * Chaining function to set `page`
+   * 
+   * @returns {this}
+   * @see Options
+   */
+  page(pageno) {
+    this.Options.setPage(pageno)
     return this
   }
 
-  order() {
-    this.Options.setOrder(...arguments)
+  /**
+   * Chaining function to set `order`
+   * 
+   * @returns {this}
+   * @see Options
+   */
+  order(order) {
+    this.Options.setOrder(order)
     return this
   }
 
+  /**
+   * Chaining function to set `raw` to true
+   * 
+   * @returns {this}
+   * @see Options
+   */
   raw() {
     this.Options.setRaw(true)
     return this
   }
 
-  sleep() {
-    this.Options.setSleep(...arguments)
+  /**
+   * Chaining function to set `sleep`
+   * 
+   * @returns {this}
+   * @see Options
+   */
+  sleep(sec) {
+    this.Options.setSleep(sec)
     return this
   }
 
   /**
-   * requests
+   * Call API interface /info.
+   * 
+   * @returns {object} json
    */
-
   async info() {
     const url = this.getUrl(
       this.Options.getHost(), 
@@ -83,6 +131,12 @@ const Request = class {
     return await this.apiRequest(url)
   }
 
+  /**
+   * Call API interface /language/(:any).
+   * 
+   * @param {string} lang 
+   * @returns {object} json
+   */
   async language(lang) {
     const url = this.getUrl(
       this.Options.getHost(),
@@ -93,13 +147,19 @@ const Request = class {
     return await this.apiRequest(url)
   }
 
-  async page(node) {
+  /**
+   * Call API interface /page/(:all?).
+   * 
+   * @param {string} path the path to the page
+   * @returns {object} json
+   */
+  async page(path) {
     const url = this.getUrl(
       this.Options.getHost(),
       this.Options.getVersion(),
       'page',
       this.Options.getLang(),
-      node
+      path
     )
     const data = {
       fields: this.Options.getFields(),
@@ -108,13 +168,19 @@ const Request = class {
     return await this.apiRequest(url, data)
   }
 
-  async pages(node) {
+  /**
+   * Call API interface /pages/(:all?).
+   * 
+   * @param {*} path the path to the parent page
+   * @returns {object} json
+   */
+  async pages(path) {
     const url = this.getUrl(
       this.Options.getHost(), 
       this.Options.getVersion(),
       'pages',
       this.Options.getLang(),
-      node
+      path
     )
     const data = {
       page: this.Options.getPage(),
@@ -126,19 +192,29 @@ const Request = class {
     return await this.apiRequest(url, data)
   }
 
-  async call(node, data) {
+  /**
+   * Generic API-request
+   * 
+   * @param {string} path
+   * @param {object} data post-data
+   * @returns {object} json
+   */
+  async call(path, data) {
     const url = this.getUrl(
       this.Options.getHost(),
       this.Options.getVersion(),
-      node
+      path
     )
     return await this.apiRequest(url, data, false) // never parse, raw
   }
 
   /**
-   * Helper
+   * Helper to build an URL from multiple parts.
+   * 
+   * @param  {...string} args the url parts
+   * @returns {string}
+   * @throws Error
    */
-
   getUrl(...args) {
     const res = toPath(...args)
     if (!isUrl(res)) {
@@ -147,7 +223,15 @@ const Request = class {
     return res
   }
 
-  async apiRequest(url, data) {
+  /**
+   * Send API request and receive response.
+   * 
+   * @param {string} url 
+   * @param {object} data optional post data
+   * @returns {object} json, parsed if parser-plugin is installed
+   * @throws Error
+   */
+  async apiRequest(url, data = null) {
     const options = {}
     if (isObj(data)) {
       options.method = 'POST'
@@ -166,12 +250,11 @@ const Request = class {
       if (!response.ok || !json.ok) {
         const msg = json.msg || response.status
         const status = json.status || response.statusText
-        throw new ApiError(`API reports an error: ${msg}`, status, url)
+        throw new Error(`API reports an error while requesting ${url}: ${msg} (Error ${status})`)
       }
       return this.Options.getRaw() ? json : parse(json) // parse does nothing, if no parser loaded
     } catch (E) {
-      if (E instanceof ApiError) throw E
-      throw new ApiError(E.message ?? 'Unknown fatal error', E.cause ?? 500, url)
+      throw E
     }
   }
 }

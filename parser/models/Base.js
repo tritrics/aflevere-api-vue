@@ -1,5 +1,8 @@
 import { toStr } from '../../fnlib'
 
+/**
+ * Base object for all models
+ */
 const base = {
   $val() {
     return this.$value
