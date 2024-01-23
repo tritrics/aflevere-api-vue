@@ -1,5 +1,5 @@
-import { isObj, has, isStr, isNum, isBool, toBool, toStr, toObj } from '../../fnlib'
-import base from './Base'
+import { isObj, has, isStr, isNum, isBool, toBool, toStr, extend } from '../../fnlib'
+import { createBase } from './Base'
 
 /**
  * Model for all remaining API fields without own model
@@ -26,5 +26,5 @@ export function createString(mixed) {
     $type: 'string',
     $value: value,
   }
-  return toObj(base, functions, data)
+  return extend(createBase(), functions, data)
 }

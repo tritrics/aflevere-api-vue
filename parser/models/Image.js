@@ -13,11 +13,11 @@ import { createFile } from './File.js'
 export function createImage(obj) {
   const field = createFile(obj)
   
-  const extend = {
+  const ext = {
     $type: 'image',
     $thumb(width = null, height = null, options = {}) {
       return createThumb(obj.meta, ...arguments)
     },
   }
-  return extend(field, extend)
+  return extend(field, ext)
 }

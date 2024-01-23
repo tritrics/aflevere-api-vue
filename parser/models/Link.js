@@ -1,5 +1,5 @@
-import { attrToStr, toObj, toBool, isStr } from '../../fnlib'
-import base from './Base'
+import { attrToStr, extend, toBool, isStr } from '../../fnlib'
+import { createBase } from './Base'
 import { getOption } from '../index'
 
 /**
@@ -68,5 +68,5 @@ export function createLink(obj) {
     data.$value = obj.value
   }
 
-  return toObj(base, functions, data)
+  return extend(createBase(), functions, data)
 }

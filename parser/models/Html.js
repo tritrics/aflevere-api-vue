@@ -1,5 +1,5 @@
-import { has, each, toObj, isArr } from '../../fnlib'
-import base from './Base'
+import { has, each, extend, isArr } from '../../fnlib'
+import { createBase } from './Base'
 import { createHtmlNode } from './HtmlNode'
 
 /**
@@ -48,5 +48,5 @@ export function createHtml(obj) {
     $type: 'html',
     $value: createNodes(isArr(obj.value) ? obj.value : [ obj.value ]),
   }
-  return toObj(base, functions, data)
+  return extend(createBase(), functions, data)
 }

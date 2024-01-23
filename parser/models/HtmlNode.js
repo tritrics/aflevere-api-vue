@@ -1,5 +1,5 @@
-import { has, each, isArr, inArr, isStr, toBool, toObj, attrToStr } from '../../fnlib'
-import base from './Base'
+import { has, each, isArr, inArr, isStr, toBool, extend, attrToStr } from '../../fnlib'
+import { createBase } from './Base'
 import { getOption } from '../index'
 import { getLinkAttributes } from './Link'
 
@@ -87,5 +87,5 @@ export function createHtmlNode(obj) {
     data.$attributes = obj.attr
   }
   data.$value = obj.value
-  return toObj(base, functions, data)
+  return extend(createBase(), functions, data)
 }

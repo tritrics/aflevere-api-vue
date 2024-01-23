@@ -1,5 +1,5 @@
-import { has, toObj } from '../../fnlib'
-import base from './Base'
+import { has, extend } from '../../fnlib'
+import { createBase } from './Base'
 import { createString } from './String'
 
 /**
@@ -18,5 +18,5 @@ export function createOption(obj) {
   if (has(obj, 'label')) {
     data.label = createString(obj.label)
   }
-  return toObj(base, functions, data)
+  return extend(createBase(), functions, data)
 }

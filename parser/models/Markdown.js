@@ -10,11 +10,11 @@ import { createString } from './String.js'
 export function createMarkdown(obj) {
   const field = createString(obj)
   
-  const extend = {
+  const ext = {
     $type: 'markdown',
     $html() {
       return 'mardown converting to html not implemented yet'
     },
   }
-  return extend(field, extend)
+  return extend(field, ext)
 }

@@ -1,5 +1,5 @@
-import { has, toBool, toObj } from '../../fnlib'
-import base from './Base'
+import { has, toBool, extend } from '../../fnlib'
+import { createBase } from './Base'
 import { createLink } from './Link'
 
 /**
@@ -40,5 +40,5 @@ export function createLanguage(obj) {
     data.$terms = obj.terms
   }
   data.$value = obj.value
-  return toObj(base, functions, data)
+  return extend(createBase(), functions, data)
 }

@@ -1,5 +1,5 @@
-import { toBool, toObj } from '../../fnlib'
-import base from './Base'
+import { toBool, extend } from '../../fnlib'
+import { createBase } from './Base'
 
 /**
  * Model for API field: boolean
@@ -26,5 +26,5 @@ export function createBoolean(obj) {
     $type: 'boolean',
     $value: toBool(obj.value),
   }
-  return toObj(base, functions, data)
+  return extend(createBase(), functions, data)
 }

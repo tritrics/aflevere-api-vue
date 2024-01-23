@@ -1,5 +1,5 @@
-import { has, each, isStr, toObj, toBool } from '../../fnlib'
-import base from './Base'
+import { has, each, isStr, extend, toBool } from '../../fnlib'
+import { createBase } from './Base'
 import { createLink } from './Link'
 
 /**
@@ -39,5 +39,5 @@ export function createPage(obj) {
   if (has(obj, 'value')) {
     data = { ...data, ...obj.value }
   }
-  return toObj(base, functions, data)
+  return extend(createBase(), functions, data)
 }

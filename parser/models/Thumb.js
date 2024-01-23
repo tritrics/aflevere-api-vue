@@ -1,4 +1,4 @@
-import { toObj } from '../../fnlib'
+import { extend } from '../../fnlib'
 import Thumb from '../../api/Thumb'
 
 /**
@@ -58,5 +58,5 @@ export function createThumb(obj, width = null, height = null, options = {}) {
     $type: 'thumb',
     $value: new Thumb(obj, width, height, options),
   }
-  return toObj(functions, data)
+  return extend(functions, data)
 }

@@ -11,7 +11,7 @@ import { getOption } from '../index'
 export function createText(obj) {
   const field = createString(obj)
   
-  const extend = {
+  const ext = {
     $type: 'text',
     $str(options) {
       return this.toString(options)
@@ -24,5 +24,5 @@ export function createText(obj) {
       return str
     },
   }
-  return extend(field, extend)
+  return extend(field, ext)
 }

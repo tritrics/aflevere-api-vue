@@ -1,6 +1,6 @@
-import { toObj, today } from '../../fnlib'
+import { extend, today } from '../../fnlib'
 import { getOption } from '../index'
-import base from './Base'
+import { createBase } from './Base'
 
 /**
  * Model for API field: date
@@ -32,5 +32,5 @@ export function createDate(obj) {
     $value: new Date(Date.UTC(...obj.meta.jsdate.split(','))),
     $timezone: obj.meta.timezone,
   }
-  return toObj(base, functions, data)
+  return extend(createBase(), functions, data)
 }

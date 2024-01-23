@@ -1,5 +1,5 @@
-import { has, each, isStr, toObj } from '../../fnlib'
-import base from './Base'
+import { has, each, isStr, extend } from '../../fnlib'
+import { createBase } from './Base'
 
 /**
  * Model for API field: languages
@@ -42,5 +42,5 @@ export function createLanguages(obj) {
     $type: 'languages',
     $value: obj.value,
   }
-  return toObj(base, functions, data)
+  return extend(createBase(), functions, data)
 }

@@ -1,7 +1,7 @@
-import { isArr, unique, clone } from '../index'
+import { isArr, isTrue, unique, clone } from '../index'
 
 /**
- * Sanitize an array.
+ * Sanitize an array (no nested arrays supported).
  * 
  * Options: 
  * {

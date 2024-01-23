@@ -1,5 +1,5 @@
-import { has, toObj } from '../../fnlib'
-import base from './Base'
+import { has, extend } from '../../fnlib'
+import { createBase } from './Base'
 
 /**
  * Model for API field: block
@@ -21,5 +21,5 @@ export function createBlock(obj) {
   if (has(obj, 'value')) {
     data = { ...data, ...obj.value }
   }
-  return toObj(base, functions, data)
+  return extend(createBase(), functions, data)
 }

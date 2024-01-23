@@ -1,6 +1,6 @@
-import { toNum, isInt, toObj } from '../../fnlib'
+import { toNum, isInt, extend } from '../../fnlib'
 import { getOption } from '../index'
-import base from './Base'
+import { createBase } from './Base'
 
 /**
  * Model for API field: number
@@ -43,5 +43,5 @@ export function createNumber(obj) {
     $type: 'number',
     $value: toNum(obj.value),
   }
-  return toObj(base, functions, data)
+  return extend(createBase(), functions, data)
 }

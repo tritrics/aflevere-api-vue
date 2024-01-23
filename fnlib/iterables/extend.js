@@ -1,17 +1,29 @@
-import { isObj, isArr } from '../index'
+import { isObj, isArr, count, each, isEmpty } from '../index'
+
 /**
- * Extend an object or an array by another.
- * Does nothing if both values are not of the same data type.
+ * Extend an object or an array by multiple others.
+ * The first is the base object and returned.
  * 
- * @param {object|array} base
- * @param {object|array} extend 
- * @returns 
+ * @param  {...any} obj multiple arrays or objects
+ * @returns {object|array}
  */
-export default function extend(base, extend) {
-  if (isObj(base) && isObj(extend)) {
-    return Object.assign(base, extend)
-  } else if (isArr(base) && isArr(extend)) {
-    return base.concat(extend)
+export default function extend(...obj) {
+  if (!count(obj)) return
+  let base = obj.shift()
+  let extend = []
+  each(obj, (mixed) => {
+    if (isEmpty(mixed)) {
+      return
+    } else if (isObj(mixed) || isArr(mixed)) {
+      extend.push(mixed)
+    } else {
+      extend.push([ mixed ])
+    }
+  })
+  if (isObj(base)) {
+    return Object.assign(base, ...extend)
+  } else if (isArr(base)) {
+    return base.concat(...extend)
   }
   return base
 }

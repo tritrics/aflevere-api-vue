@@ -9,7 +9,7 @@ const Options = class {
    * The options like { key: value }
    * {object}
    */
-  params
+  params = {}
 
   /**
    * @param {object} params 

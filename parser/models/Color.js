@@ -1,5 +1,5 @@
-import { toObj, toBool } from '../../fnlib'
-import base from './Base'
+import { extend, toBool } from '../../fnlib'
+import { createBase } from './Base'
 
 /**
  * Model for API field: color
@@ -16,5 +16,5 @@ export function createColor(obj) {
     $alpha: toBool(obj.meta.alpha),
     $value: obj.value,
   }
-  return toObj(base, functions, data)
+  return extend(createBase(), functions, data)
 }
