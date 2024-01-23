@@ -1,7 +1,11 @@
 import wordsToArr from './wordsToArr'
 
 /**
- * foo_bar
+ * Creates a snakeCase from one or more strings.
+ * Example: foo_bar
+ * 
+ * @param  {...any} args 
+ * @returns {string}
  */
 export default function snakeCase(...args) {
   const str = args.join(' ')

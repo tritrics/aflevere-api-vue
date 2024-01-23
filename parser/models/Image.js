@@ -1,4 +1,4 @@
-import { extendObj } from '../../fnlib'
+import { extend } from '../../fnlib'
 import { createThumb } from './Thumb.js'
 import { createFile } from './File.js'
 
@@ -19,5 +19,5 @@ export function createImage(obj) {
       return createThumb(obj.meta, ...arguments)
     },
   }
-  return extendObj(field, extend)
+  return extend(field, extend)
 }

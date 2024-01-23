@@ -20,7 +20,7 @@ export { default as isUndef } from './checks/isUndef.js'
 export { default as isUrl } from './checks/isUrl.js'
 
 // classes
-export { default as createOptions } from './classes/Options.js'
+export { default as Options } from './classes/Options.js'
 
 // client
 export { default as getDocHeight } from './client/getDocHeight.js'
@@ -52,7 +52,7 @@ export { default as stripslashes } from './html/stripslashes.js'
 export { default as clone } from './iterables/clone.js'
 export { default as count } from './iterables/count.js'
 export { default as each } from './iterables/each.js'
-export { default as extendObj } from './iterables/extendObj.js'
+export { default as extend } from './iterables/extend.js'
 export { default as getByPath } from './iterables/getByPath.js'
 export { default as has } from './iterables/has.js'
 export { default as inArr } from './iterables/inArr.js'
@@ -62,7 +62,6 @@ export { default as sanArr } from './iterables/sanArr.js'
 export { default as unset } from './iterables/unset.js'
 
 // keys
-export { default as hash } from './keys/hash.js'
 export { default as unique } from './keys/unique.js'
 export { default as uuid } from './keys/uuid.js'
 

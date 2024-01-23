@@ -1,7 +1,11 @@
 import { wordsToArr, toStr } from '../index'
 
 /**
- * fooBar
+ * Creates a camelCase from one or more strings.
+ * Example: fooBar
+ * 
+ * @param  {...any} args 
+ * @returns {string}
  */
 export default function camelCase(...args) {
   const str = args.join(' ')

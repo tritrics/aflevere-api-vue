@@ -1,5 +1,11 @@
 import { toStr } from '../index'
 
+/**
+ * Add slashes to critical characters.
+ * 
+ * @param {string} val 
+ * @returns {string}
+ */
 export default function addSlashes(val) {
   return toStr(val).
     replace(/\\/g, '\\\\').

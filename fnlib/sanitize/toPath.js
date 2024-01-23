@@ -1,8 +1,11 @@
 import { each, toStr, isNum, isStr, trim, isUrl } from '../index'
 
 /**
- * Creates a path or url from any kind of parameters
- * adds a leading slash, if it's not an url
+ * Creates a slash-separated path or url from any kind of parameters.
+ * Adds a leading slash, if it's not an url.
+ * 
+ * @param  {...any} args multiple strings
+ * @returns {string}
  */
 export default function toPath(...args) {
   const res = []

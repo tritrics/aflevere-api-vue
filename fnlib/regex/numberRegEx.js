@@ -2,6 +2,7 @@ import { isInt, regEsc } from '../index'
 
 /**
  * Create a test-regex for numbers
+ * 
  * @param {Integet} decimals [ 0 for integer, >0 for float with fixed, * for infinite ]
  * @return {RegExp}
  */

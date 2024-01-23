@@ -1,7 +1,11 @@
 import { wordsToArr, toStr } from '../index'
 
 /**
- * FooBar
+ * Creates a pascalCase from one or more strings.
+ * Example: FooBar
+ * 
+ * @param  {...any} args 
+ * @returns {string}
  */
 export default function pascalCase(...args) {
   const str = args.join(' ')

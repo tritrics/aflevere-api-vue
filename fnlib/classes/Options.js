@@ -1,38 +1,49 @@
-import { isObj, each } from '../index'
+import { isObj, isStr, each } from '../index'
 
 /**
- * general option object
+ * Simple option object
  */
 const Options = class {
+
+  /**
+   * The options like { key: value }
+   * {object}
+   */
   params
 
-  constructor(params) {
-    this.params = isObj(params) ? params : {}
+  /**
+   * @param {object} params 
+   */
+  constructor(params = {}) {
+    this.set(params)
   }
 
+  /**
+   * Getter
+   * 
+   * @param {string} key 
+   * @returns {mixed}
+   */
   get(key) {
-    return this.params[key] || false
+    return this.params[key]
   }
 
-  set(key, val) {
-    this.params[key] = val
-  }
-
-  merge(params) {
-    if (isObj(params)) {
-      each(params, (val, key) => {
-        this.set(key, val)
+  /**
+   * Setter
+   * Can also set multiple options at once
+   * 
+   * @param {string|object} mixed key to set or an object { key: value }
+   * @param {mixed} val 
+   */
+  set(mixed, val = null) {
+    if (isObj(mixed)) {
+      each(mixed, (val, key) => {
+        this.params[key] = val
       })
+    } else if (isStr(mixed)) {
+      this.params[mixed] = val
     }
   }
 }
 
-/**
- * Create a new Options instance.
- * 
- * @param {object} params 
- * @returns {Options}
- */
-export default function createOptions(params) {
-  return new Options(params)
-}
+export default Options

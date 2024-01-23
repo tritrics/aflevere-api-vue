@@ -1,10 +1,16 @@
 import { isArr, isObj } from '../index'
 
-export default function clone(obj) {
-  if (isArr(obj)) {
-    return obj.slice(0)
-  } else if (isObj(obj)) {
-    return structuredClone(obj)
+/**
+ * Clone an object or an array.
+ * 
+ * @param {object|array} val 
+ * @returns {object}
+ */
+export default function clone(val) {
+  if (isArr(val)) {
+    return val.slice(0)
+  } else if (isObj(val)) {
+    return structuredClone(val)
   }
-  return obj
+  return val
 }

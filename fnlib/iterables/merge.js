@@ -1,17 +1,17 @@
-import { isIterable, inArr, isObj, clone, unique, each, createOptions } from '../index'
+import { isIterable, isArr, isObj, clone, unique, each, Options } from '../index'
 
 /**
- * Method to merge objects or arrays where arrays as nodes of objects are
+ * Method to deep merge multiple objects or arrays where arrays as values are
  * also handled. Result is returned as a new object/array. Use like
  * 
  * const result = merge(obj1, obj2[, obj3, ...[, Options]])
  * 
- * Last param can optional be instance of Options created like:
- * 
- * const Options = getOptions({
+ * Options are optional and must be instance of Options.
+ * Possible settings:
+ * {
  *  arrays: [true|false], // merge arrays (relevant only when objects are merged)
  *  unique: [true|false], // set arrays to unique entries after merge
- * })
+ * }
  * 
  * @param {Object} multiple objects or arrays
  * @param {boolean} optional boolean as last param
@@ -29,7 +29,7 @@ export default function merge() {
   if(args.length > 2 && arguments[args.length - 1] instanceof Options) {
     mergeOptions = args.pop()
   } else {
-    mergeOptions = createOptions( { arrays: true, unique: true } )
+    mergeOptions = new Options( { arrays: true, unique: true } )
   }
 
   // first element determines if array of objects are merged  

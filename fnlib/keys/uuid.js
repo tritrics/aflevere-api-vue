@@ -1,3 +1,9 @@
+/**
+ * Creates a random hexadecimal string.
+ * Not very strong, but good enough for most cases and short.
+ * 
+ * @returns {string}
+ */
 export default function uuid() {
   const time = new Date().getTime()
   const rand = Math.floor(Math.random() * 8999) + 1000

@@ -1,7 +1,11 @@
 import { wordsToArr } from '../index'
 
 /**
- * foo-bar
+ * Creates a kebabCase from one or more strings.
+ * Example: foo-bar
+ * 
+ * @param  {...any} args 
+ * @returns {string}
  */
 export default function kebabCase(...args) {
   const str = args.join(' ')

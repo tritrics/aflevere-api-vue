@@ -1,4 +1,4 @@
-import { isBool } from '../index'
+import { isStr, isNum, inArr, toStr } from '../index'
 
 /**
  * Check, if a value is true.
@@ -11,5 +11,11 @@ import { isBool } from '../index'
  * @returns {boolean}
  */
 export default function isTrue(val, strict = true) {
-  return isBool(val, strict, true, false)
+  if (val === true) {
+    return true
+  }
+  if (!strict && (isStr(val) || isNum(val))) {
+    return inArr(toStr(val).toLowerCase(), [ '1', 'true' ])
+  }
+  return false
 }

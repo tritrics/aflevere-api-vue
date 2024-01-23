@@ -1,4 +1,4 @@
-import { extendObj } from '../../fnlib'
+import { extend } from '../../fnlib'
 import { createString } from './String.js'
 import { getOption } from '../index'
 
@@ -24,5 +24,5 @@ export function createText(obj) {
       return str
     },
   }
-  return extendObj(field, extend)
+  return extend(field, extend)
 }

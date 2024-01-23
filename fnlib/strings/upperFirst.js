@@ -1,6 +1,12 @@
 import {toStr} from '../index'
 
+/**
+ * Converts first character of a string to uppercase and the rest to lower.
+ * 
+ * @param {string} val 
+ * @returns {string}
+ */
 export default function upperFirst(val) {
-  const i = toStr(val)
-  return i.charAt(0).toUpperCase() + i.slice(1)
+  const str = toStr(val)
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase()
 }

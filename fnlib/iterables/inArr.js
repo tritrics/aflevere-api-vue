@@ -1,7 +1,11 @@
 import { isArr, clone } from '../index'
 
 /**
- * val can be single value or array with single values
+ * Check if one or more values exist in array.
+ * 
+ * @param {mixed} val can be single value or array with single values
+ * @param {array} arr 
+ * @returns {boolean}
  */
 export default function inArr(val, arr) {
   if (!isArr(arr)) {

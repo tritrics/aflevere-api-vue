@@ -1,12 +1,28 @@
-import { isArr } from '../index'
+import { isArr, unique, clone } from '../index'
 
-export default function sanArr(val, removeEmpty = true) {
+/**
+ * Sanitize an array.
+ * 
+ * Options: 
+ * {
+ *   empty: true, remove empty values
+ *   unique: false, make array unique
+ * }
+ * 
+ * @param {array} val 
+ * @param {object} options 
+ * @returns 
+ */
+export default function sanArr(val, options = { empty: true, unique: false }) {
   if (!isArr(val)) {
-    return null
+    return val
   }
-  if (removeEmpty) {
-    val = val.filter(n => n)
+  let res = clone(val)
+  if (isTrue(options.empty)) {
+    res = res.filter(n => n)
   }
-  // ... more to come
-  return val
+  if(isTrue(options.unique)) {
+    res = unique(res)
+  }
+  return res
 }
