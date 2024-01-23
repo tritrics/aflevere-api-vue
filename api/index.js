@@ -96,6 +96,19 @@ export async function getPages(path, params = {}) {
 }
 
 /**
+ * Post data to API interface /post/(:any).
+ * Post data to specified action
+ * 
+ * @param {string} action the action
+ * @param {object} data post-data
+ * @param {object} params optionally overwrite or amend default options
+ * @returns {object} json
+ */
+export async function postAction(action, data = {}, params = {}) {
+  return await createRequest(params).action(action, data)
+}
+
+/**
  * Generic API-request
  * 
  * @param {string} path
@@ -292,6 +305,7 @@ export async function createApi(params) {
         getInfo,
         getPage,
         getPages,
+        postAction,
         apiCall,
         createThumb,
         hasPlugin,

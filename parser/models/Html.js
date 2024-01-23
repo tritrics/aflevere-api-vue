@@ -5,7 +5,7 @@ import { createHtmlNode } from './HtmlNode'
 /**
  * Recoursive function to create HtmlNodes from html field value.
  * 
- * @param array nodes 
+ * @param Array nodes 
  * @returns object
  */
 function createNodes(nodes) {

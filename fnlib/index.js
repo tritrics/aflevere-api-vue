@@ -44,6 +44,8 @@ export { default as today } from './dates/today.js'
 // html
 export { default as attrToStr } from './html/attrToStr.js'
 export { default as escape } from './html/escape.js'
+export { default as highlight } from './html/highlight.js'
+export { default as htmlentities } from './html/htmlentities.js'
 export { default as pathToArr } from './html/pathToArr.js'
 export { default as rmNewlines } from './html/rmNewlines.js'
 export { default as stripslashes } from './html/stripslashes.js'

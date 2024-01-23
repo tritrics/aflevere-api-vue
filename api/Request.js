@@ -193,6 +193,23 @@ const Request = class {
   }
 
   /**
+   * Post data to API interface /action/(:any).
+   * 
+   * @param {string} action 
+   * @returns {object} data
+   */
+  async action(action, data) {
+    const url = this.getUrl(
+      this.Options.getHost(), 
+      this.Options.getVersion(),
+      'action',
+      this.Options.getLang(),
+      action
+    )
+    return await this.apiRequest(url, data)
+  }
+
+  /**
    * Generic API-request
    * 
    * @param {string} path
