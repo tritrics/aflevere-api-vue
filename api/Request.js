@@ -1,4 +1,4 @@
-import { isObj, toPath, isUrl } from '../fnlib'
+import { isStr, isObj, toPath, isUrl } from '../fnlib'
 import { parse } from './index'
 
 /**
@@ -107,17 +107,6 @@ const Request = class {
   }
 
   /**
-   * Chaining function to set `sleep`
-   * 
-   * @returns {this}
-   * @see Options
-   */
-  sleep(sec) {
-    this.Options.setSleep(sec)
-    return this
-  }
-
-  /**
    * Call API interface /info.
    * 
    * @returns {object} json
@@ -163,7 +152,6 @@ const Request = class {
     )
     const data = {
       fields: this.Options.getFields(),
-      sleep: this.Options.getSleep(),
     }
     return await this.apiRequest(url, data)
   }
@@ -187,26 +175,43 @@ const Request = class {
       limit: this.Options.getLimit(),
       order: this.Options.getOrder(),
       fields: this.Options.getFields(),
-      sleep: this.Options.getSleep(),
     }
     return await this.apiRequest(url, data)
   }
 
   /**
-   * Post data to API interface /action/(:any).
+   * Post data to a specified action /action/submit/(:any).
    * 
    * @param {string} action 
    * @returns {object} data
    */
-  async action(action, data) {
-    const url = this.getUrl(
+  async submit(action, data) {
+
+    // store raw settings
+    const raw = this.Options.getRaw()
+
+    // get token
+    this.Options.setRaw(true)
+    const urlToken = this.getUrl(
       this.Options.getHost(), 
       this.Options.getVersion(),
-      'action',
+      'action/token',
       this.Options.getLang(),
       action
     )
-    return await this.apiRequest(url, data)
+    const res = await this.apiRequest(urlToken)
+
+    // submit
+    this.Options.setRaw(raw)
+    const urlSubmit = this.getUrl(
+      this.Options.getHost(), 
+      this.Options.getVersion(),
+      'action/submit',
+      this.Options.getLang(),
+      action,
+      res.body.token
+    )
+    return await this.apiRequest(urlSubmit, data)
   }
 
   /**

@@ -17,7 +17,6 @@ const Options = class {
     page: 1,
     order: 'asc',
     raw: false,
-    sleep: 0,
     multilang: true, // multilang is only set to false by i18n-plugin
   }
 
@@ -104,13 +103,6 @@ const Options = class {
    */
   getRaw() {
     return this.#params.raw
-  }
-
-  /**
-   * @returns {integer}
-   */
-  getSleep() {
-    return this.#params.sleep
   }
 
   /**
@@ -234,22 +226,8 @@ const Options = class {
    * 
    * @param {boolean} returnRaw 
    */
-  setRaw(returnRaw) {
-    this.#params.raw = isBool(returnRaw) ? returnRaw : false
-  }
-
-  /**
-   * Set option `sleep`
-   * Manually extend the time of response, for debugging purposes.
-   * 
-   * @param {integer} sec 
-   */
-  setSleep(sec) {
-    if (isInt(sec, 0, 10)) {
-      this.#params.sleep = sec
-    } else {
-      this.#params.sleep = 1
-    }
+  setRaw(raw) {
+    this.#params.raw = isBool(raw) ? raw : false
   }
 
   /**
