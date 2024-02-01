@@ -186,12 +186,9 @@ const Request = class {
    * @returns {object} data
    */
   async submit(action, data) {
-
-    // store raw settings
-    const raw = this.Options.getRaw()
+    this.Options.setRaw(true)
 
     // get token
-    this.Options.setRaw(true)
     const urlToken = this.getUrl(
       this.Options.getHost(), 
       this.Options.getVersion(),
@@ -202,7 +199,6 @@ const Request = class {
     const res = await this.apiRequest(urlToken)
 
     // submit
-    this.Options.setRaw(raw)
     const urlSubmit = this.getUrl(
       this.Options.getHost(), 
       this.Options.getVersion(),
