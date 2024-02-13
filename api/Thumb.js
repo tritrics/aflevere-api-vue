@@ -1,4 +1,4 @@
-import { inArr, isBool, isInt, isObj, toBool, isStr, attrToStr } from '../fnlib'
+import { inArr, isBool, isInt, isObj, toBool, isStr, objToAttr } from '../fnlib'
 
 /**
  * Representation of an image with helper functions to create scaled thumbs.
@@ -153,7 +153,7 @@ const Thumb = class {
     if (this.options.title) {
       attr.alt = this.options.title
     }
-    return toBool(asString) ? attrToStr(attr) : attr
+    return toBool(asString) ? objToAttr(attr) : attr
   }
 
   /**

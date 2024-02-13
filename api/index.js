@@ -96,15 +96,15 @@ export async function getPages(path, params = {}) {
 }
 
 /**
- * Submit data to a specified action /action/submit/(:any).
+ * Submit data to a specified action /action/(:any).
  * 
  * @param {string} action the action
  * @param {object} data post-data
  * @param {object} params optionally overwrite or amend default options
  * @returns {object} json
  */
-export async function submitAction(action, data = {}, token = null, params = {}) {
-  return await createRequest(params).submit(action, data)
+export async function createAction(action, data = {}, token = null, params = {}) {
+  return await createRequest(params).create(action, data)
 }
 
 /**
@@ -304,7 +304,7 @@ export async function createApi(params) {
         getInfo,
         getPage,
         getPages,
-        submitAction,
+        createAction,
         apiCall,
         createThumb,
         hasPlugin,

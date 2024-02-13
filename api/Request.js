@@ -1,4 +1,4 @@
-import { isStr, isObj, toPath, isUrl } from '../fnlib'
+import { isObj, toPath, isUrl, upper, objToParam } from '../fnlib'
 import { parse } from './index'
 
 /**
@@ -53,6 +53,7 @@ const Request = class {
 
   /**
    * Chaining function to set `fields` to `all`
+   * Shortcut for fields(true)
    * 
    * @returns {this}
    * @see Options
@@ -153,7 +154,7 @@ const Request = class {
     const data = {
       fields: this.Options.getFields(),
     }
-    return await this.apiRequest(url, data)
+    return await this.apiRequest(url, 'GET', data)
   }
 
   /**
@@ -176,23 +177,23 @@ const Request = class {
       order: this.Options.getOrder(),
       fields: this.Options.getFields(),
     }
-    return await this.apiRequest(url, data)
+    return await this.apiRequest(url, 'GET', data)
   }
 
   /**
-   * Post data to a specified action /action/submit/(:any).
+   * Post data to a specified action /action/(:any).
    * 
    * @param {string} action 
    * @returns {object} data
    */
-  async submit(action, data) {
+  async create(action, data) {
     this.Options.setRaw(true)
 
     // get token
     const urlToken = this.getUrl(
       this.Options.getHost(), 
       this.Options.getVersion(),
-      'action/token',
+      'token',
       this.Options.getLang(),
       action
     )
@@ -202,12 +203,12 @@ const Request = class {
     const urlSubmit = this.getUrl(
       this.Options.getHost(), 
       this.Options.getVersion(),
-      'action/submit',
+      'action',
       this.Options.getLang(),
       action,
       res.body.token
     )
-    return await this.apiRequest(urlSubmit, data)
+    return await this.apiRequest(urlSubmit, 'POST', data)
   }
 
   /**
@@ -217,13 +218,13 @@ const Request = class {
    * @param {object} data post-data
    * @returns {object} json
    */
-  async call(path, data) {
+  async call(path, method = 'GET', data = null) {
     const url = this.getUrl(
       this.Options.getHost(),
       this.Options.getVersion(),
       path
     )
-    return await this.apiRequest(url, data, false) // never parse, raw
+    return await this.apiRequest(url, method, data)
   }
 
   /**
@@ -245,22 +246,25 @@ const Request = class {
    * Send API request and receive response.
    * 
    * @param {string} url 
-   * @param {object} data optional post data
+   * @param {string} method GET, POST, PUT, DELETE
+   * @param {object} data optional data, converts to post data or get-params
    * @returns {object} json, parsed if parser-plugin is installed
    * @throws Error
    */
-  async apiRequest(url, data = null) {
-    const options = {}
+  async apiRequest(url, method = 'GET', data = null) {
+    const options = {
+      method: upper(method),
+      mode: 'cors',
+      cache:'no-cache',
+    }
     if (isObj(data)) {
-      options.method = 'POST'
-      options.mode = 'cors'
-      options.cache = 'no-cache'
-      options.headers = { 'content-type': 'application/json' }
-      options.body = JSON.stringify(data)
-    } else {
-      options.method = 'GET'
-      options.mode = 'cors'
-      options.cache = 'no-cache'
+      if (method === 'GET') {
+        url = `${url}${objToParam(data)}`
+        console.log(url)
+      } else {
+        options.headers = { 'content-type': 'application/json' }
+        options.body = JSON.stringify(data)
+      }
     }
     try {
       const response = await fetch(url, options)

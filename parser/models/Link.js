@@ -1,4 +1,4 @@
-import { attrToStr, extend, toBool, isStr } from '../../fnlib'
+import { objToAttr, extend, toBool, isStr } from '../../fnlib'
 import { createBase } from './Base'
 import { getOption } from '../index'
 
@@ -23,8 +23,8 @@ export function getLinkAttributes(element, attributes, asString, options) {
   elemAttr[`data-link-${elemAttr.type}`] = null
   delete(elemAttr.type)
   const add = getOption('html.attr', options)
-  const attr = { ...elemAttr, ...(add[element] || {}) }
-  return toBool(asString) ? attrToStr(attr) : attr
+  const res = { ...elemAttr, ...(add[element] || {}) }
+  return toBool(asString) ? objToAttr(res) : res
 }
 
 /**

@@ -12,7 +12,7 @@ const Options = class {
   #params = {
     host: null,
     lang:  null,
-    fields: 'all',
+    fields: [],
     limit: 10,
     page: 1,
     order: 'asc',
@@ -156,7 +156,7 @@ const Options = class {
   /**
    * Set option `fields`
    * given parameter can be:
-   *   - setFields('all') to request all fields
+   *   - setFields(true) to request all fields
    *   - array with list of fieldnames setFields(['field1', 'field2', 'field3'])
    *   - string with comma-separated fieldnames setFields('field1, field2, field3')
    *   - multiple strings with fieldnames setFields('field1', 'field2', 'field3')
@@ -166,7 +166,7 @@ const Options = class {
   setFields(...val) {
     let fields = []
     if (val.length === 1) {
-      if (toBool(val[0]) === true) {
+      if (toBool(val[0]) === true || val[0] === 'all') {
         this.#params.fields = 'all'
         return
       } else if (isArr(val[0])) {

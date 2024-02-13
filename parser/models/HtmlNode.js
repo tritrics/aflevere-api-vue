@@ -1,4 +1,4 @@
-import { has, each, isArr, inArr, isStr, toBool, extend, attrToStr } from '../../fnlib'
+import { has, each, isArr, inArr, isStr, toBool, extend, objToAttr } from '../../fnlib'
 import { createBase } from './Base'
 import { getOption } from '../index'
 import { getLinkAttributes } from './Link'
@@ -43,8 +43,8 @@ export function createHtmlNode(obj) {
         return getLinkAttributes(this.$element, this.$attributes, asString, options)
       } else {
         const add = getOption('html.attr', options)
-        const attr = { ...(this.$attributes || {}), ...(add[this.$element] || {}) }
-        return toBool(asString) ? attrToStr(attr) : attr
+        const res = { ...(this.$attributes || {}), ...(add[this.$element] || {}) }
+        return toBool(asString) ? objToAttr(res) : res
       }
     },
 

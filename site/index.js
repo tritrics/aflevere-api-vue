@@ -10,7 +10,7 @@ const data = ref({})
  * Init = request site.
  */
 async function requestSite() {
-  const json = await getPage('/', { raw: true })
+  const json = await getPage('/', { fields: true, raw: true })
   data.value = parse(json) // parse does nothing if not parser exists
   publish('on-changed-site', data)
 }
