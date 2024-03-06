@@ -1,4 +1,4 @@
-import { toStr } from '../../fnlib'
+import { toStr } from '../../fn'
 
 /**
  * Base object for all models

@@ -1,4 +1,4 @@
-import { each, has, isArr, isObj } from '../fnlib'
+import { each, has, isArr, isObj } from '../fn'
 import { subscribe } from '../api'
 import ParserOptions from './Options'
 import { createBoolean } from './models/Boolean'

@@ -1,4 +1,4 @@
-import { has, extend } from '../../fnlib'
+import { has, extend } from '../../fn'
 import { createBase } from './Base'
 import { createString } from './String'
 

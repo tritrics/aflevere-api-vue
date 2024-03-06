@@ -1,4 +1,4 @@
-import { extend, now, today } from '../../fnlib'
+import { extend, now, today } from '../../fn'
 import { getOption } from '../index'
 import { createBase } from './Base'
 

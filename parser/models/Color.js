@@ -1,4 +1,4 @@
-import { extend, toBool } from '../../fnlib'
+import { extend, toBool } from '../../fn'
 import { createBase } from './Base'
 
 /**

@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import { each, trim, lower, has, clone, toBool } from '../fnlib'
+import { each, trim, lower, has, clone, toBool } from '../fn'
 import { getInfo, getLanguage as getLanguageRequest, publish, parse } from '../api'
 
 /**

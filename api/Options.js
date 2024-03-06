@@ -1,5 +1,5 @@
 import { APIVERSION } from './index.js'
-import { each, has, trim, lower, isArr, isBool, isInt, isObj, isStr, toBool, upperFirst } from '../fnlib'
+import { each, has, trim, lower, isArr, isBool, isInt, isObj, isStr, toBool, upperFirst } from '../fn'
 
 /**
  * Options for an API request

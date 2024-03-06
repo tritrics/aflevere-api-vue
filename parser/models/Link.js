@@ -1,4 +1,4 @@
-import { objToAttr, extend, toBool, isStr } from '../../fnlib'
+import { objToAttr, extend, toBool, isStr } from '../../fn'
 import { createBase } from './Base'
 import { getOption } from '../index'
 

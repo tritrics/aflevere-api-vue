@@ -1,4 +1,4 @@
-import { isObj, toPath, isUrl, upper, objToParam } from '../fnlib'
+import { isObj, toPath, isUrl, upper, objToParam } from '../fn'
 import { parse } from './index'
 
 /**

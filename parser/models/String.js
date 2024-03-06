@@ -1,4 +1,4 @@
-import { isObj, has, isStr, isNum, isBool, toBool, toStr, extend } from '../../fnlib'
+import { isObj, has, isStr, isNum, isBool, toBool, toStr, extend } from '../../fn'
 import { createBase } from './Base'
 
 /**

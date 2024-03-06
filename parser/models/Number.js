@@ -1,4 +1,4 @@
-import { toNum, isInt, extend } from '../../fnlib'
+import { toNum, isInt, extend } from '../../fn'
 import { getOption } from '../index'
 import { createBase } from './Base'
 

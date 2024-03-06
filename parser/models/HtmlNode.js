@@ -1,4 +1,4 @@
-import { has, each, isArr, inArr, isStr, toBool, extend, objToAttr } from '../../fnlib'
+import { has, each, isArr, inArr, isStr, toBool, extend, objToAttr } from '../../fn'
 import { createBase } from './Base'
 import { getOption } from '../index'
 import { getLinkAttributes } from './Link'

@@ -1,4 +1,4 @@
-import { extend } from '../../fnlib'
+import { extend } from '../../fn'
 import Thumb from '../../api/Thumb'
 
 /**

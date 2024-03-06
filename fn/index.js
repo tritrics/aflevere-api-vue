@@ -62,10 +62,10 @@ export { default as inArr } from './iterables/inArr.js'
 export { default as keys } from './iterables/keys.js'
 export { default as merge } from './iterables/merge.js'
 export { default as sanArr } from './iterables/sanArr.js'
+export { default as unique } from './iterables/unique.js'
 export { default as unset } from './iterables/unset.js'
 
 // keys
-export { default as unique } from './keys/unique.js'
 export { default as uuid } from './keys/uuid.js'
 
 // numbers
@@ -101,3 +101,6 @@ export { default as wordsToArr } from './strings/wordsToArr.js'
 export { default as truncate } from './strings/truncate.js'
 export { default as upper } from './strings/upper.js'
 export { default as upperFirst } from './strings/upperFirst.js'
+
+// tools
+export { default as wait } from './tools/wait.js'

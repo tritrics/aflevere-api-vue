@@ -1,4 +1,4 @@
-import { has, each, extend, isArr } from '../../fnlib'
+import { has, each, extend, isArr } from '../../fn'
 import { createBase } from './Base'
 import { createHtmlNode } from './HtmlNode'
 

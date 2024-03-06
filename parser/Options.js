@@ -1,4 +1,4 @@
-import { each, has, clone, merge, isObj, isStr } from '../fnlib'
+import { each, has, clone, merge, isObj, isStr } from '../fn'
 
 /**
  * Options for parser plugin

@@ -1,4 +1,4 @@
-import { has, each, isStr, extend } from '../../fnlib'
+import { has, each, isStr, extend } from '../../fn'
 import { createBase } from './Base'
 
 /**

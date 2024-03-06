@@ -1,4 +1,4 @@
-import { extend } from '../../fnlib'
+import { extend } from '../../fn'
 import { createString } from './String.js'
 import { getOption } from '../index'
 

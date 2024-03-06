@@ -1,4 +1,4 @@
-import { extend, now } from '../../fnlib'
+import { extend, now } from '../../fn'
 import { getOption } from '../index'
 import { createBase } from './Base'
 

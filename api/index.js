@@ -1,4 +1,4 @@
-import { has, unset, each, isObj, isStr, isFunc, inArr, sanArr } from '../fnlib'
+import { has, unset, each, isObj, isStr, isFunc, inArr, sanArr } from '../fn'
 import Thumb from './Thumb'
 import Request from './Request'
 import RequestOptions from './Options'

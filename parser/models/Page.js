@@ -1,4 +1,4 @@
-import { has, each, isStr, extend, toBool } from '../../fnlib'
+import { has, each, isStr, extend, toBool } from '../../fn'
 import { createBase } from './Base'
 import { createLink } from './Link'
 

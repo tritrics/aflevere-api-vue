@@ -1,4 +1,4 @@
-import { extend } from '../../fnlib'
+import { extend } from '../../fn'
 import { createThumb } from './Thumb.js'
 import { createFile } from './File.js'
 

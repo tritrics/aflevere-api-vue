@@ -1,4 +1,4 @@
-import { inArr, isBool, isInt, isObj, toBool, isStr, objToAttr } from '../fnlib'
+import { inArr, isBool, isInt, isObj, toBool, isStr, objToAttr } from '../fn'
 
 /**
  * Representation of an image with helper functions to create scaled thumbs.
