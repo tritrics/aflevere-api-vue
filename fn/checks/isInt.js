@@ -6,9 +6,8 @@ import { isNum } from '../index'
  * @param {mixed} val 
  * @param {number} min minimum value, optional
  * @param {number} max maximum value, optional
- * @param {boolean} boundariesIncluded min and max included in interval
  * @returns {boolean}
  */
-export default function isInt(val, min = null, max = null, boundariesIncluded = true) {
-  return isNum(val, min, max, boundariesIncluded) && Math.floor(val) === val
+export default function isInt(val, min = null, max = null) {
+  return isNum(val, min, max) && Math.floor(val) === val
 }

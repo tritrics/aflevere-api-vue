@@ -1,4 +1,4 @@
-import { APIVERSION } from './index.js'
+import { APIVERSION } from './index'
 import { each, has, trim, lower, isArr, isBool, isInt, isObj, isStr, toBool, upperFirst } from '../fn'
 
 /**

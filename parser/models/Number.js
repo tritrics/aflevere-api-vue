@@ -22,8 +22,8 @@ export function createNumber(obj) {
     $isSmaller(max) {
       return isNum(this.$value, null, max, false)
     },
-    $isBetween(min, max, boundariesIncluded = true) {
-      return isNum(this.$value, min, max, boundariesIncluded)
+    $isBetween(min, max) {
+      return isNum(this.$value, min, max)
     },
     toString(options) {
       const fixed = getOption('number.fixed', options)
