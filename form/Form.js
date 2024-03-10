@@ -29,6 +29,11 @@ import {
 const Form = class {
 
   /**
+   * Valid/supported Kirby field types
+   */
+  types = [ 'boolean', 'email', 'date', 'number', 'select', 'string', 'text', 'time', 'url' ]
+
+  /**
    * The field definitions like given in constructor or from API
    */
   defs = {}
@@ -131,7 +136,14 @@ const Form = class {
         data[key] = toBool(def.value)
       } else if (def.type === 'date') {
         const date = toDate(def.value, def.format)
-        data[key] = date ? dateToStr(date, 'yyyy-mm-dd') : ''
+        if (date) {
+          data[key] = dateToStr(date, (def.time ? 'yyyy-mm-dd hh:ii' : 'yyyy-mm-dd'))
+        } else {
+          data[key] = ''
+        }
+      } else if (def.type === 'time') {
+        const date = toDate(def.value, def.format)
+        data[key] = date ? dateToStr(date, 'hh:ii') : ''
       } else if (def.type === 'number') {
         data[key] = toNum(def.value)
       } else if (has(def, 'multiple') && def.multiple) {
@@ -140,7 +152,6 @@ const Form = class {
         data[key] = toStr(def.value)
       }
     })
-    console.log(data)
     return data
   }
 
@@ -179,43 +190,131 @@ const Form = class {
    */
   initFields() {
     each(this.defs, (def, key) => {
-      this.initField(key, def)
+
+      // get Type
+      let type = 'string'
+      if (has(def, 'type') && inArr(lower(trim(def.type)), this.types)) {
+        type = lower(trim(def.type))
+      }
+
+      // call init function
+      const fn = camelCase('init', type)
+      this.fields.value[key] = this[fn](def)
+      this.fields.value[key].valid = true
+      this.fields.value[key].error = computed(() => !this.fields.value[key].valid && !this.showErrors.value)
+      this.fields.value[key].msg = ''
+
+      // watcher
+      this.fields.value[key].stop = watchEffect(() => {
+        this.validateField(
+          key,
+          this.fields.value[key].value // important to kick off the watchEffect
+        )
+      })
     })
   }
 
   /**
-   * Init a single field
+   * Init boolean field
    * 
-   * @param {string} key the field name
-   * @param {object} def the field properties
+   * @param {object} def 
+   * @returns object
    */
-  initField(key, def) {
-    const res = {}
-
-    // Type
-    res.type = 'string'
-    if (has(def, 'type')) {
-      const type = lower(trim(def.type))
-      if (inArr(type, [ 'boolean', 'email', 'date', 'number', 'select', 'string', 'text', 'url' ])) {
-        res.type = type
-      }
+  initBoolean(def) {
+    const res = {
+      type: 'boolean'
     }
+    res.value = has(def, 'value') && isTrue(def.value, false) ? true : false
+    res.required = has(def, 'required') && isTrue(def.required) ? true : false
+    return res
+  }
 
-    // multiple, min, max
-    if (inArr(res.type, ['string', 'select'])) {
-      res.multiple = has(def, 'multiple') && isTrue(def.multiple)
-      if (res.multiple) { // allow also integers as strings
-        res.min = has(def, 'min') && isInt(def.min, 1, null, false) ? toInt(def.min) : null
-        res.max = has(def, 'max') && isInt(def.max, 1, null, false) ? toInt(def.max) : null
-      }
+  /**
+   * Init date field
+   * 
+   * @param {object} def 
+   * @returns object
+   */
+  initDate(def) {
+    const res = {
+      type: 'date'
     }
+    res.value = has(def, 'value') ? toStr(def.value) : ''
+    res.required = has(def, 'required') && isTrue(def.required) ? true : false
+    res.time = has(def, 'time') && isTrue(def.time)
+    res.format = res.time ? 'yyyy-mm-dd hh:ii' : 'yyyy-mm-dd'
+    res.min = has(def, 'min') && isDate(def.min, null, null, false, 'yyyy-mm-dd') ? toDate(def.min, 'yyyy-mm-dd') : null
+    res.max = has(def, 'max') && isDate(def.max, null, null, false, 'yyyy-mm-dd') ? toDate(def.max, 'yyyy-mm-dd') : null
+    return res
+  }
 
-    // Preset value
-    // boolean is converted to bool, because checkbox v-model requires bool
-    // all other values are converted to strings
-    if(res.type === 'boolean') {
-      res.value = has(def, 'value') && isTrue(def.value, false) ? true : false
-    } else if(res.type === 'string' && res.multiple) {
+  /**
+   * Init email field
+   * 
+   * @param {object} def 
+   * @returns object
+   */
+  initEmail(def) {
+    const res = {
+      type: 'email'
+    }
+    res.value = has(def, 'value') ? toStr(def.value) : ''
+    res.required = has(def, 'required') && isTrue(def.required) ? true : false
+    return res
+  }
+
+  /**
+   * Init number field
+   * 
+   * @param {object} def 
+   * @returns object
+   */
+  initNumber(def) {
+    const res = {
+      type: 'number'
+    }
+    res.value = has(def, 'value') ? toStr(def.value) : ''
+    res.required = has(def, 'required') && isTrue(def.required) ? true : false
+    return res
+  }
+
+  /**
+   * Init select field
+   * 
+   * @param {object} def 
+   * @returns object
+   */
+  initSelect(def) {
+    const res = {
+      type: 'select'
+    }
+    res.multiple = has(def, 'multiple') && isTrue(def.multiple)
+    if (res.multiple) { // allow also integers as strings
+      res.min = has(def, 'min') && isInt(def.min, 1, null, false) ? toInt(def.min) : null
+      res.max = has(def, 'max') && isInt(def.max, 1, null, false) ? toInt(def.max) : null
+      res.value = has(def, 'value') && isArr(def.value) ? def.value : []
+    } else {
+      res.value = has(def, 'value') ? toStr(def.value) : ''
+    }
+    res.options = has(def, 'options') && isArr(def.options) ? def.options : []
+    res.required = has(def, 'required') && isTrue(def.required) ? true : false
+    return res
+  }
+
+  /**
+   * Init string field
+   * 
+   * @param {object} def 
+   * @returns object
+   */
+  initString(def) {
+    const res = {
+      type: 'string'
+    }
+    res.multiple = has(def, 'multiple') && isTrue(def.multiple)
+    if (res.multiple) { // allow also integers as strings
+      res.min = has(def, 'min') && isInt(def.min, 1, null, false) ? toInt(def.min) : null
+      res.max = has(def, 'max') && isInt(def.max, 1, null, false) ? toInt(def.max) : null
       let value = isArr(def.value) ? def.value : []
       if (isInt(res.min, 1) && value.length < res.min) {
         res.value = value.concat(Array.from({length: res.min - value.length}, n => ''))
@@ -224,56 +323,63 @@ const Form = class {
       } else {
         res.value = value
       }
-    } else if(res.type === 'select' && res.multiple) {
-      res.value = has(def, 'value') && isArr(def.value) ? def.value : []
     } else {
       res.value = has(def, 'value') ? toStr(def.value) : ''
     }
-
-    // Options
-    if(res.type === 'select') {
-      res.options = has(def, 'options') && isArr(def.options) ? def.options : []
-    }
-
-    // required
     res.required = has(def, 'required') && isTrue(def.required) ? true : false
+    res.minlength = has(def, 'minlength') && isInt(def.minlength, 1, null, false) ? toInt(def.minlength) : null
+    res.maxlength = has(def, 'maxlength') && isInt(def.maxlength, 1, null, false) ? toInt(def.maxlength) : null
+    return res
+  }
 
-    // format for date
-    if(res.type === 'date') {
-      res.format = has(def, 'format') && isStr(def.format, 1) ? def.format : 'yyyy-mm-dd'
+  /**
+   * Init text field
+   * 
+   * @param {object} def 
+   * @returns object
+   */
+  initText(def) {
+    const res = {
+      type: 'text'
     }
+    res.value = has(def, 'value') ? toStr(def.value) : ''
+    res.required = has(def, 'required') && isTrue(def.required) ? true : false
+    res.minlength = has(def, 'minlength') && isInt(def.minlength, 1, null, false) ? toInt(def.minlength) : null
+    res.maxlength = has(def, 'maxlength') && isInt(def.maxlength, 1, null, false) ? toInt(def.maxlength) : null
+    return res
+  }
 
-    // minlength, maxlength
-    if (inArr(res.type, ['string', 'text'])) { // allow also integers as strings
-      res.minlength = has(def, 'minlength') && isInt(def.minlength, 1, null, false) ? toInt(def.minlength) : null
-      res.maxlength = has(def, 'maxlength') && isInt(def.maxlength, 1, null, false) ? toInt(def.maxlength) : null
+  /**
+   * Init time field
+   * 
+   * @param {object} def 
+   * @returns object
+   */
+  initTime(def) {
+    const res = {
+      type: 'time'
     }
+    res.value = has(def, 'value') ? toStr(def.value) : ''
+    res.required = has(def, 'required') && isTrue(def.required) ? true : false
+    res.format = 'hh:ii'
+    res.min = has(def, 'min') && isDate(def.min, null, null, false, 'hh:ii') ? toDate(def.min, 'hh:ii') : null
+    res.max = has(def, 'max') && isDate(def.max, null, null, false, 'hh:ii') ? toDate(def.max, 'hh:ii') : null
+    return res
+  }
 
-    // min, max for number and date
-    if(res.type === 'number') { // allow also integers as strings
-      res.min = has(def, 'min') && isInt(def.min, 1, null, false) ? toInt(def.min) : null
-      res.max = has(def, 'max') && isInt(def.max, 1, null, false) ? toInt(def.max) : null
+  /**
+   * Init url field
+   * 
+   * @param {object} def 
+   * @returns object
+   */
+  initUrl(def) {
+    const res = {
+      type: 'url'
     }
-    if(res.type === 'date') { // allow also strings in format yyyy-mm-dd
-      res.min = has(def, 'min') && isDate(def.min, null, null, false) ? toDate(def.min) : null
-      res.max = has(def, 'max') && isDate(def.max, null, null, false) ? toDate(def.max) : null
-    }
-
-    // error/validation flags
-    res.valid = true
-    res.error = computed(() => !this.fields.value[key].valid && !this.showErrors.value)
-    res.msg = ''
-
-    // set before watcher is added
-    this.fields.value[key] = res
-
-    // watcher
-    this.fields.value[key].stop = watchEffect(() => {
-      this.validateField(
-        key,
-        this.fields.value[key].value // important to kick off the watchEffect
-      )
-    })
+    res.value = has(def, 'value') ? toStr(def.value) : ''
+    res.required = has(def, 'required') && isTrue(def.required) ? true : false
+    return res
   }
 
   /**
@@ -303,7 +409,7 @@ const Form = class {
   }
 
   /**
-   * [ Date, "2024-03-10" (in given format) ]
+   * [ Date, "yyyy-mm-dd", "yyyy-mm-dd hh:ii" ]
    * 
    * @param {object} def the field properties
    * @returns {boolean}
@@ -338,6 +444,8 @@ const Form = class {
     if (def.required || !isEmpty(def.value)) {
       return isNum(def.value, def.min, def.max, false)
     }
+    res.min = has(def, 'min') && isInt(def.min, 1, null, false) ? toInt(def.min) : null
+    res.max = has(def, 'max') && isInt(def.max, 1, null, false) ? toInt(def.max) : null
     return true
   }
 
@@ -389,6 +497,19 @@ const Form = class {
   validateText(def) {
     if (def.required || !isEmpty(def.value)) {
       return isStr(def.value, def.minlength, def.maxlength)
+    }
+    return true
+  }
+
+  /**
+   * [ Date, "hh:ii" ]
+   * 
+   * @param {object} def the field properties
+   * @returns {boolean}
+   */
+  validateTime(def) {
+    if (def.required || !isEmpty(def.value)) {
+      return isDate(def.value, def.min, def.max, false, def.format)
     }
     return true
   }
