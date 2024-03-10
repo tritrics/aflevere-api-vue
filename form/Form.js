@@ -1,6 +1,30 @@
-import { ref, computed, watchEffect } from 'vue'
-import { createAction } from '../api'
-import { each, has, lower, trim, camelCase, isStr, isEmpty, isEmail, isUrl, isObj, isArr, inArr, isInt, isTrue, isNum, isBool, toNum, toStr, toBool } from '../fn'
+import { ref, computed, watchEffect, inject } from 'vue'
+import { createAction, subscribe, hasPlugin } from '../api'
+import {
+  each,
+  has,
+  lower,
+  trim,
+  camelCase,
+  dateToStr,
+  inArr,
+  isArr,
+  isBool,
+  isDate,
+  isEmpty,
+  isEmail,
+  isInt,
+  isNum,
+  isObj,
+  isStr,
+  isTrue,
+  isUrl,
+  toBool,
+  toDate,
+  toInt,
+  toNum,
+  toStr,
+} from '../fn'
 
 const Form = class {
 
@@ -17,7 +41,7 @@ const Form = class {
   /**
    * Options
    */
-  options = {}
+  options = ref({})
 
   /**
    * Flag to determine, wheather "error" property of each field is set or not
@@ -42,9 +66,7 @@ const Form = class {
    * @param {object} options additional options
    */
   constructor(mixed, options = {}) {
-    if (isObj(options)) {
-      this.options = options
-    }
+    this.setOptions(options)
     if (isStr(mixed, 1)) {
       this.action = mixed
       this.defs = this.getFieldDefFromApi()
@@ -52,6 +74,27 @@ const Form = class {
       this.defs = mixed
     }
     this.initFields()
+  }
+
+  /**
+   * Setting options like action, locale
+   * 
+   * @param {object} options 
+   * @return {void}
+   */
+  setOptions(options) {
+    if (isObj(options)) {
+      this.options.value = options
+    }
+    if (!has(this.options.value, 'locale') && hasPlugin('i18n')) {
+      const i18n = inject('api.i18n')
+      this.options.value.locale = i18n.getLocale()
+    } else {
+      this.options.value.locale = 'en-US'
+    }
+    subscribe('on-changed-locale', (locale) => {
+      this.options.value.locale = locale
+    })
   }
 
   /**
@@ -86,6 +129,9 @@ const Form = class {
     each(this.fields.value, (def, key) => {
       if (def.type === 'boolean') {
         data[key] = toBool(def.value)
+      } else if (def.type === 'date') {
+        const date = toDate(def.value, def.format)
+        data[key] = date ? dateToStr(date, 'yyyy-mm-dd') : ''
       } else if (def.type === 'number') {
         data[key] = toNum(def.value)
       } else if (has(def, 'multiple') && def.multiple) {
@@ -94,6 +140,7 @@ const Form = class {
         data[key] = toStr(def.value)
       }
     })
+    console.log(data)
     return data
   }
 
@@ -103,12 +150,12 @@ const Form = class {
    * @returns {json}
    */
   async submit() {
-    if (has(this.options, 'action') && isStr(this.options.action, 1)) {
+    if (has(this.options.value, 'action') && isStr(this.options.value.action, 1)) {
       const options = {}
-      if (has(this.options, 'lang') && isStr(this.options.lang, 1)) {
-        options.lang = this.options.lang
+      if (has(this.options.value, 'lang') && isStr(this.options.value.lang, 1)) {
+        options.lang = this.options.value.lang
       }
-      return await createAction(this.options.action, this.data(), options)
+      return await createAction(this.options.value.action, this.data(), options)
     }
   }
 
@@ -149,7 +196,7 @@ const Form = class {
     res.type = 'string'
     if (has(def, 'type')) {
       const type = lower(trim(def.type))
-      if (inArr(type, [ 'boolean', 'email', 'number', 'select', 'string', 'text', 'url' ])) {
+      if (inArr(type, [ 'boolean', 'email', 'date', 'number', 'select', 'string', 'text', 'url' ])) {
         res.type = type
       }
     }
@@ -157,9 +204,9 @@ const Form = class {
     // multiple, min, max
     if (inArr(res.type, ['string', 'select'])) {
       res.multiple = has(def, 'multiple') && isTrue(def.multiple)
-      if (res.multiple) {
-        res.min = has(def, 'min') && isInt(def.min, 1) ? def.min : null
-        res.max = has(def, 'max') && isInt(def.max, 1) ? def.max : null
+      if (res.multiple) { // allow also integers as strings
+        res.min = has(def, 'min') && isInt(def.min, 1, null, false) ? toInt(def.min) : null
+        res.max = has(def, 'max') && isInt(def.max, 1, null, false) ? toInt(def.max) : null
       }
     }
 
@@ -191,16 +238,25 @@ const Form = class {
     // required
     res.required = has(def, 'required') && isTrue(def.required) ? true : false
 
-    // minlength, maxlength
-    if (inArr(res.type, ['string', 'text'])) {
-      res.minlength = has(def, 'minlength') && isInt(def.minlength, 1) ? def.minlength : null
-      res.maxlength = has(def, 'maxlength') && isInt(def.maxlength, 1) ? def.maxlength : null
+    // format for date
+    if(res.type === 'date') {
+      res.format = has(def, 'format') && isStr(def.format, 1) ? def.format : 'yyyy-mm-dd'
     }
 
-    // minvalue, maxvalue
-    if(res.type === 'number') {
-      res.minvalue = has(def, 'minvalue') && isInt(def.minvalue, 1) ? def.minvalue : null
-      res.maxvalue = has(def, 'maxvalue') && isInt(def.maxvalue, 1) ? def.maxvalue : null
+    // minlength, maxlength
+    if (inArr(res.type, ['string', 'text'])) { // allow also integers as strings
+      res.minlength = has(def, 'minlength') && isInt(def.minlength, 1, null, false) ? toInt(def.minlength) : null
+      res.maxlength = has(def, 'maxlength') && isInt(def.maxlength, 1, null, false) ? toInt(def.maxlength) : null
+    }
+
+    // min, max for number and date
+    if(res.type === 'number') { // allow also integers as strings
+      res.min = has(def, 'min') && isInt(def.min, 1, null, false) ? toInt(def.min) : null
+      res.max = has(def, 'max') && isInt(def.max, 1, null, false) ? toInt(def.max) : null
+    }
+    if(res.type === 'date') { // allow also strings in format yyyy-mm-dd
+      res.min = has(def, 'min') && isDate(def.min, null, null, false) ? toDate(def.min) : null
+      res.max = has(def, 'max') && isDate(def.max, null, null, false) ? toDate(def.max) : null
     }
 
     // error/validation flags
@@ -247,6 +303,19 @@ const Form = class {
   }
 
   /**
+   * [ Date, "2024-03-10" (in given format) ]
+   * 
+   * @param {object} def the field properties
+   * @returns {boolean}
+   */
+  validateDate(def) {
+    if (def.required || !isEmpty(def.value)) {
+      return isDate(def.value, def.min, def.max, false, def.format)
+    }
+    return true
+  }
+
+  /**
    * [ "foo@bar.com", "", null ]
    * 
    * @param {object} def the field properties
@@ -267,7 +336,7 @@ const Form = class {
    */
   validateNumber(def) {
     if (def.required || !isEmpty(def.value)) {
-      return isNum(def.value, def.minvalue, def.maxvalue, false)
+      return isNum(def.value, def.min, def.max, false)
     }
     return true
   }

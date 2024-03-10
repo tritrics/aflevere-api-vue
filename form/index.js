@@ -4,7 +4,6 @@ import Form from './Form'
  * Alpha-version
  * Missing:
  * - get validation defintions from Kirby (optional)
- * - send data to Kirby
  */
 
 function createUserForm(fields, options = {}) {

@@ -35,8 +35,7 @@ export function createDateTime(obj) {
   
   const data = {
     $type: 'datetime',
-    $value: new Date(obj.meta.iso),
-    $timezone: obj.meta.timezone,
+    $value: new Date(obj.meta.utc)
   }
   return extend(createBase(), functions, data)
 }

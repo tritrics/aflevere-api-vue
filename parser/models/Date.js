@@ -29,8 +29,7 @@ export function createDate(obj) {
 
   const data = {
     $type: 'date',
-    $value: new Date(obj.meta.iso),
-    $timezone: obj.meta.timezone,
+    $value: new Date(obj.meta.utc)
   }
   return extend(createBase(), functions, data)
 }

@@ -38,6 +38,7 @@ export { default as getWinHeight } from './client/getWinHeight.js'
 export { default as getWinWidth } from './client/getWinWidth.js'
 
 // dates
+export { default as dateToStr } from './dates/dateToStr.js'
 export { default as now } from './dates/now.js'
 export { default as today } from './dates/today.js'
 
@@ -80,6 +81,7 @@ export { default as regEsc } from './regex/regEsc.js'
 
 // sanitize
 export { default as toBool } from './sanitize/toBool.js'
+export { default as toDate } from './sanitize/toDate.js'
 export { default as toFloat } from './sanitize/toFloat.js'
 export { default as toInt } from './sanitize/toInt.js'
 export { default as toNum } from './sanitize/toNum.js'

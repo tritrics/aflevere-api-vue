@@ -69,20 +69,12 @@ const Options = class {
 
   /**
    * Set locale (after language change)
-   * Accepted: `de-DE` or `de_DE`
    * 
    * @param {string} locale
    * @returns {string}
    */
   setLocale(locale) {
-    if (isStr(locale)) {
-      if(/^[a-z]{2,}[_]{1,}[A-Z]{2,}$/.test(locale)) {
-        locale = locale.replace('_', '-')
-      }
-      if(/^[a-z]{2,}[-]{1,}[A-Z]{2,}$/.test(locale)) {
-        this.set({ global: { locale: locale }})
-      }
-    }
+    this.set({ global: { locale: locale }})
     return this.#params.global.locale.value
   }
 

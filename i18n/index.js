@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import { each, trim, lower, has, clone, toBool } from '../fn'
+import { each, trim, lower, has, clone, toBool, isStr } from '../fn'
 import { getInfo, getLanguage as getLanguageRequest, publish, parse } from '../api'
 
 /**
@@ -185,13 +185,31 @@ async function requestLanguage(lang) {
   if (isMultilang()) {
     const json = await getLanguageRequest(lang, { raw: true })
     data.value.current = lang
-    data.value.map[data.value.current ].locale = json.body.meta.locale
+    data.value.map[data.value.current].locale = normalizeLocale(json.body.meta.locale)
     terms.value = clone(json.body.terms)
     language.value = parse(json.body)
     publish('on-changed-langcode', getLangcode())
     publish('on-changed-locale', getLocale())
     publish('on-changed-language', getLanguage())
   }
+}
+
+/**
+ * Check and convert to javascript locale format.
+ * 
+ * @param {string} locale 
+ * @returns {string}
+ */
+function normalizeLocale(locale) {
+  if (isStr(locale)) {
+    if(/^[a-z]{2,}[_]{1,}[A-Z]{2,}$/.test(locale)) {
+      locale = locale.replace('_', '-')
+    }
+    if(/^[a-z]{2,}[-]{1,}[A-Z]{2,}$/.test(locale)) {
+      return locale
+    }
+  }
+  return 'en-US'
 }
 
 /**
