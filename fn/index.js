@@ -76,7 +76,8 @@ export { default as pad } from './numbers/pad.js'
 export { default as round } from './numbers/round.js'
 
 // regex
-export { default as numberRegEx } from './regex/numberRegEx.js'
+export { default as dateRegExp } from './regex/dateRegExp.js'
+export { default as numberRegExp } from './regex/numberRegExp.js'
 export { default as regEsc } from './regex/regEsc.js'
 
 // sanitize

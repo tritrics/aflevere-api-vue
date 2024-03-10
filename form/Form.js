@@ -7,6 +7,7 @@ import {
   trim,
   camelCase,
   dateToStr,
+  dateRegExp,
   inArr,
   isArr,
   isBool,
@@ -136,11 +137,7 @@ const Form = class {
         data[key] = toBool(def.value)
       } else if (def.type === 'date') {
         const date = toDate(def.value, def.format)
-        if (date) {
-          data[key] = dateToStr(date, (def.time ? 'yyyy-mm-dd hh:ii' : 'yyyy-mm-dd'))
-        } else {
-          data[key] = ''
-        }
+        data[key] = date ? dateToStr(date, 'yyyy-mm-dd hh:ii') : ''
       } else if (def.type === 'time') {
         const date = toDate(def.value, def.format)
         data[key] = date ? dateToStr(date, 'hh:ii') : ''
@@ -189,6 +186,7 @@ const Form = class {
    * @param {object} fields 
    */
   initFields() {
+    this.fields.value = {}
     each(this.defs, (def, key) => {
 
       // get Type
@@ -215,6 +213,18 @@ const Form = class {
   }
 
   /**
+   * Standard validation method, checks for correnct type, required, min, max
+   * 
+   * @param {string} name the fieldname
+   */
+  validateField(key) {
+    if (has(this.fields.value, key)) {
+      const fn = camelCase('validate', this.fields.value[key].type)
+      this.fields.value[key].valid = this[fn](this.fields.value[key])
+    }
+  }
+
+  /**
    * Init boolean field
    * 
    * @param {object} def 
@@ -230,6 +240,20 @@ const Form = class {
   }
 
   /**
+   * [ true, false, "true", "false", 0, 1, "0", "1" ]
+   * 
+   * @param {object} def the field properties
+   * @returns {boolean}
+   */
+  validateBoolean(def) {
+    if (def.required) {
+      return isTrue(def.value, false)
+    } else {
+      return isBool(def.value, false)
+    }
+  }
+
+  /**
    * Init date field
    * 
    * @param {object} def 
@@ -242,10 +266,27 @@ const Form = class {
     res.value = has(def, 'value') ? toStr(def.value) : ''
     res.required = has(def, 'required') && isTrue(def.required) ? true : false
     res.time = has(def, 'time') && isTrue(def.time)
-    res.format = res.time ? 'yyyy-mm-dd hh:ii' : 'yyyy-mm-dd'
-    res.min = has(def, 'min') && isDate(def.min, null, null, false, 'yyyy-mm-dd') ? toDate(def.min, 'yyyy-mm-dd') : null
-    res.max = has(def, 'max') && isDate(def.max, null, null, false, 'yyyy-mm-dd') ? toDate(def.max, 'yyyy-mm-dd') : null
+    if (has(def, 'format') && isStr(def.format, 1)) {
+      res.format = dateRegExp(def.format)
+    } else {
+      res.format = dateRegExp('yyyy-mm-dd')
+    }
+    res.min = has(def, 'min') && isDate(def.min, null, null, false, def.format) ? toDate(def.min, def.format) : null
+    res.max = has(def, 'max') && isDate(def.max, null, null, false, def.format) ? toDate(def.max, def.format) : null
     return res
+  }
+
+  /**
+   * [ Date, "yyyy-mm-dd", "yyyy-mm-dd hh:ii" ]
+   * 
+   * @param {object} def the field properties
+   * @returns {boolean}
+   */
+  validateDate(def) {
+    if (def.required || !isEmpty(def.value)) {
+      return isDate(def.value, def.min, def.max, false, def.format)
+    }
+    return true
   }
 
   /**
@@ -264,6 +305,19 @@ const Form = class {
   }
 
   /**
+   * [ "foo@bar.com", "", null ]
+   * 
+   * @param {object} def the field properties
+   * @returns {boolean}
+   */
+  validateEmail(def) {
+    if (def.required || !isEmpty(def.value)) {
+      return isEmail(def.value)
+    }
+    return true
+  }
+
+  /**
    * Init number field
    * 
    * @param {object} def 
@@ -276,6 +330,21 @@ const Form = class {
     res.value = has(def, 'value') ? toStr(def.value) : ''
     res.required = has(def, 'required') && isTrue(def.required) ? true : false
     return res
+  }
+
+  /**
+   * [ 123, 0.5, -3, "123", "0.5", "-3", "", null ]
+   * 
+   * @param {object} def the field properties
+   * @returns {boolean}
+   */
+  validateNumber(def) {
+    if (def.required || !isEmpty(def.value)) {
+      return isNum(def.value, def.min, def.max, false)
+    }
+    res.min = has(def, 'min') && isInt(def.min, 1, null, false) ? toInt(def.min) : null
+    res.max = has(def, 'max') && isInt(def.max, 1, null, false) ? toInt(def.max) : null
+    return true
   }
 
   /**
@@ -299,6 +368,25 @@ const Form = class {
     res.options = has(def, 'options') && isArr(def.options) ? def.options : []
     res.required = has(def, 'required') && isTrue(def.required) ? true : false
     return res
+  }
+
+  /**
+   * [ value[s] from options ]
+   * 
+   * @param {object} def the field defintion
+   * @returns {boolean}
+   */
+  validateSelect(def) {
+    if (def.multiple) {
+      if (def.required || def.value.length > 0) {
+        return isArr(def.value, def.min, def.max) && inArr(def.value, def.options)
+      }
+    } else {
+      if (def.required || !isEmpty(def.value)) {
+        return inArr(def.value, def.options)
+      }
+    }
+    return true
   }
 
   /**
@@ -333,142 +421,6 @@ const Form = class {
   }
 
   /**
-   * Init text field
-   * 
-   * @param {object} def 
-   * @returns object
-   */
-  initText(def) {
-    const res = {
-      type: 'text'
-    }
-    res.value = has(def, 'value') ? toStr(def.value) : ''
-    res.required = has(def, 'required') && isTrue(def.required) ? true : false
-    res.minlength = has(def, 'minlength') && isInt(def.minlength, 1, null, false) ? toInt(def.minlength) : null
-    res.maxlength = has(def, 'maxlength') && isInt(def.maxlength, 1, null, false) ? toInt(def.maxlength) : null
-    return res
-  }
-
-  /**
-   * Init time field
-   * 
-   * @param {object} def 
-   * @returns object
-   */
-  initTime(def) {
-    const res = {
-      type: 'time'
-    }
-    res.value = has(def, 'value') ? toStr(def.value) : ''
-    res.required = has(def, 'required') && isTrue(def.required) ? true : false
-    res.format = 'hh:ii'
-    res.min = has(def, 'min') && isDate(def.min, null, null, false, 'hh:ii') ? toDate(def.min, 'hh:ii') : null
-    res.max = has(def, 'max') && isDate(def.max, null, null, false, 'hh:ii') ? toDate(def.max, 'hh:ii') : null
-    return res
-  }
-
-  /**
-   * Init url field
-   * 
-   * @param {object} def 
-   * @returns object
-   */
-  initUrl(def) {
-    const res = {
-      type: 'url'
-    }
-    res.value = has(def, 'value') ? toStr(def.value) : ''
-    res.required = has(def, 'required') && isTrue(def.required) ? true : false
-    return res
-  }
-
-  /**
-   * Standard validation method, checks for correnct type, required, min, max
-   * 
-   * @param {string} name the fieldname
-   */
-  validateField(key) {
-    if (has(this.fields.value, key)) {
-      const fn = camelCase('validate', this.fields.value[key].type)
-      this.fields.value[key].valid = this[fn](this.fields.value[key])
-    }
-  }
-
-  /**
-   * [ true, false, "true", "false", 0, 1, "0", "1" ]
-   * 
-   * @param {object} def the field properties
-   * @returns {boolean}
-   */
-  validateBoolean(def) {
-    if (def.required) {
-      return isTrue(def.value, false)
-    } else {
-      return isBool(def.value, false)
-    }
-  }
-
-  /**
-   * [ Date, "yyyy-mm-dd", "yyyy-mm-dd hh:ii" ]
-   * 
-   * @param {object} def the field properties
-   * @returns {boolean}
-   */
-  validateDate(def) {
-    if (def.required || !isEmpty(def.value)) {
-      return isDate(def.value, def.min, def.max, false, def.format)
-    }
-    return true
-  }
-
-  /**
-   * [ "foo@bar.com", "", null ]
-   * 
-   * @param {object} def the field properties
-   * @returns {boolean}
-   */
-  validateEmail(def) {
-    if (def.required || !isEmpty(def.value)) {
-      return isEmail(def.value)
-    }
-    return true
-  }
-
-  /**
-   * [ 123, 0.5, -3, "123", "0.5", "-3", "", null ]
-   * 
-   * @param {object} def the field properties
-   * @returns {boolean}
-   */
-  validateNumber(def) {
-    if (def.required || !isEmpty(def.value)) {
-      return isNum(def.value, def.min, def.max, false)
-    }
-    res.min = has(def, 'min') && isInt(def.min, 1, null, false) ? toInt(def.min) : null
-    res.max = has(def, 'max') && isInt(def.max, 1, null, false) ? toInt(def.max) : null
-    return true
-  }
-
-  /**
-   * [ value[s] from options ]
-   * 
-   * @param {object} def the field defintion
-   * @returns {boolean}
-   */
-  validateSelect(def) {
-    if (def.multiple) {
-      if (def.required || def.value.length > 0) {
-        return isArr(def.value, def.min, def.max) && inArr(def.value, def.options)
-      }
-    } else {
-      if (def.required || !isEmpty(def.value)) {
-        return inArr(def.value, def.options)
-      }
-    }
-    return true
-  }
-
-  /**
    * [ "string", "", null ]
    * 
    * @param {object} def the field defintion
@@ -489,6 +441,23 @@ const Form = class {
   }
 
   /**
+   * Init text field
+   * 
+   * @param {object} def 
+   * @returns object
+   */
+  initText(def) {
+    const res = {
+      type: 'text'
+    }
+    res.value = has(def, 'value') ? toStr(def.value) : ''
+    res.required = has(def, 'required') && isTrue(def.required) ? true : false
+    res.minlength = has(def, 'minlength') && isInt(def.minlength, 1, null, false) ? toInt(def.minlength) : null
+    res.maxlength = has(def, 'maxlength') && isInt(def.maxlength, 1, null, false) ? toInt(def.maxlength) : null
+    return res
+  }
+
+  /**
    * [ "string", "", null ]
    * 
    * @param {object} def the field properties
@@ -502,6 +471,24 @@ const Form = class {
   }
 
   /**
+   * Init time field
+   * 
+   * @param {object} def 
+   * @returns object
+   */
+  initTime(def) {
+    const res = {
+      type: 'time'
+    }
+    res.value = has(def, 'value') ? toStr(def.value) : ''
+    res.required = has(def, 'required') && isTrue(def.required) ? true : false
+    res.format = 'h:ii'
+    res.min = has(def, 'min') && isDate(def.min, null, null, false, 'h:ii') ? toDate(def.min, 'h:ii') : null
+    res.max = has(def, 'max') && isDate(def.max, null, null, false, 'h:ii') ? toDate(def.max, 'h:ii') : null
+    return res
+  }
+
+  /**
    * [ Date, "hh:ii" ]
    * 
    * @param {object} def the field properties
@@ -512,6 +499,21 @@ const Form = class {
       return isDate(def.value, def.min, def.max, false, def.format)
     }
     return true
+  }
+
+  /**
+   * Init url field
+   * 
+   * @param {object} def 
+   * @returns object
+   */
+  initUrl(def) {
+    const res = {
+      type: 'url'
+    }
+    res.value = has(def, 'value') ? toStr(def.value) : ''
+    res.required = has(def, 'required') && isTrue(def.required) ? true : false
+    return res
   }
 
   /**

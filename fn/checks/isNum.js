@@ -10,7 +10,7 @@ import { isStr, toNum } from '../index'
  * @returns {boolean}
  */
 export default function isNum(val, min = null, max = null, strict = true) {
-  if (!strict && isStr(val) && /^-?\d+\.?\d*$/.test(val)) {
+  if (!strict && isStr(val) && /^-?\d+[,\.]?\d*$/.test(val)) {
     val = toNum(val)
   }
   if (typeof val === 'number' && Number.isFinite(val)) {
