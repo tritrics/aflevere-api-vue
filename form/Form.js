@@ -220,7 +220,14 @@ const Form = class {
   validateField(key) {
     if (has(this.fields.value, key)) {
       const fn = camelCase('validate', this.fields.value[key].type)
-      this.fields.value[key].valid = this[fn](this.fields.value[key])
+      const res = this[fn](this.fields.value[key])
+      if (res === true) {
+        this.fields.value[key].valid = true
+        this.fields.value[key].msg = null
+      } else {
+        this.fields.value[key].valid = false
+        this.fields.value[key].msg = res
+      }
     }
   }
 
@@ -243,14 +250,15 @@ const Form = class {
    * [ true, false, "true", "false", 0, 1, "0", "1" ]
    * 
    * @param {object} def the field properties
-   * @returns {boolean}
+   * @returns {string|boolean}
    */
   validateBoolean(def) {
-    if (def.required) {
-      return isTrue(def.value, false)
-    } else {
-      return isBool(def.value, false)
+    if (def.required && !isTrue(def.value, false)) {
+      return 'required'
+    } else if (!isBool(def.value, false)) {
+      return 'type'
     }
+    return true
   }
 
   /**
@@ -280,11 +288,19 @@ const Form = class {
    * [ Date, "yyyy-mm-dd", "yyyy-mm-dd hh:ii" ]
    * 
    * @param {object} def the field properties
-   * @returns {boolean}
+   * @returns {string|boolean}
    */
   validateDate(def) {
-    if (def.required || !isEmpty(def.value)) {
-      return isDate(def.value, def.min, def.max, false, def.format)
+    if (isEmpty(def.value)) {
+      if (def.required) {
+        return 'required'
+      }
+    } else if(!isDate(def.value, null, null, false, def.format)) {
+      return 'type'
+    } else if(def.min && !isDate(def.value, def.min, null, false, def.format)) {
+      return 'min'
+    } else if(def.max && !isDate(def.value, null, def.max, false, def.format)) {
+      return 'max'
     }
     return true
   }
@@ -308,11 +324,15 @@ const Form = class {
    * [ "foo@bar.com", "", null ]
    * 
    * @param {object} def the field properties
-   * @returns {boolean}
+   * @returns {string|boolean}
    */
   validateEmail(def) {
-    if (def.required || !isEmpty(def.value)) {
-      return isEmail(def.value)
+    if (isEmpty(def.value)) {
+      if (def.required) {
+        return 'required'
+      }
+    } else if(!isEmail(def.value)) {
+      return 'type'
     }
     return true
   }
@@ -329,6 +349,8 @@ const Form = class {
     }
     res.value = has(def, 'value') ? toStr(def.value) : ''
     res.required = has(def, 'required') && isTrue(def.required) ? true : false
+    res.min = has(def, 'min') && isInt(def.min, 1, null, false) ? toInt(def.min) : null
+    res.max = has(def, 'max') && isInt(def.max, 1, null, false) ? toInt(def.max) : null
     return res
   }
 
@@ -336,14 +358,20 @@ const Form = class {
    * [ 123, 0.5, -3, "123", "0.5", "-3", "", null ]
    * 
    * @param {object} def the field properties
-   * @returns {boolean}
+   * @returns {string|boolean}
    */
   validateNumber(def) {
-    if (def.required || !isEmpty(def.value)) {
-      return isNum(def.value, def.min, def.max, false)
+    if (isEmpty(def.value)) {
+      if (def.required) {
+        return 'required'
+      }
+    } else if(!isNum(def.value, null, null, false)) {
+      return 'type'
+    } else if(def.min && !isNum(def.value, def.min, null, false)) {
+      return 'min'
+    } else if(def.max && !isNum(def.value, null, def.max, false)) {
+      return 'max'
     }
-    res.min = has(def, 'min') && isInt(def.min, 1, null, false) ? toInt(def.min) : null
-    res.max = has(def, 'max') && isInt(def.max, 1, null, false) ? toInt(def.max) : null
     return true
   }
 
@@ -374,16 +402,20 @@ const Form = class {
    * [ value[s] from options ]
    * 
    * @param {object} def the field defintion
-   * @returns {boolean}
+   * @returns {string|boolean}
    */
   validateSelect(def) {
-    if (def.multiple) {
-      if (def.required || def.value.length > 0) {
-        return isArr(def.value, def.min, def.max) && inArr(def.value, def.options)
+    if (isEmpty(def.value)) {
+      if (def.required) {
+        return 'required'
       }
-    } else {
-      if (def.required || !isEmpty(def.value)) {
-        return inArr(def.value, def.options)
+    } else if (!inArr(def.value, def.options)) {
+      return 'type'
+    } else if (def.multiple) {
+      if (def.min && !isInt(def.value.length, def.min)) {
+        return 'min'
+      } else if (def.max && !isInt(def.value.length, null, def.max)) {
+        return 'max'
       }
     }
     return true
@@ -424,20 +456,32 @@ const Form = class {
    * [ "string", "", null ]
    * 
    * @param {object} def the field defintion
-   * @returns {boolean}
+   * @returns {string|array|boolean}
    */
   validateString(def) {
     if (def.multiple) {
-      if (def.required || def.value.length > 0) {
-        const check = def.value.filter(n => isStr(n, def.minlength, def.maxlength))
-        return isInt(check.length, def.min, def.max) && check.length === def.value.length
+      if (isEmpty(def.value)) {
+        if (def.required) {
+          return 'required'
+        }
+      } else if (!isArr(def.value)) {
+        return 'type'
+      } else if (def.min && !isInt(def.value.length, def.min)) {
+        return 'min'
+      } else if (def.max && !isInt(def.value.length, null, def.max)) {
+        return 'max'
+      } else {
+        const res = []
+        each (def.value, entry => {
+          res.push(this.validateDefault(entry, def))
+        })
+        if(res.filter(n => n !== true).length > 0) {
+          return res
+        }
       }
-    } else {
-      if (def.required || !isEmpty(def.value)) {
-        return isStr(def.value, def.minlength, def.maxlength)
-      }
+      return true
     }
-    return true
+    return this.validateDefault(def.value, def)
   }
 
   /**
@@ -461,13 +505,10 @@ const Form = class {
    * [ "string", "", null ]
    * 
    * @param {object} def the field properties
-   * @returns {boolean}
+   * @returns {string|boolean}
    */
   validateText(def) {
-    if (def.required || !isEmpty(def.value)) {
-      return isStr(def.value, def.minlength, def.maxlength)
-    }
-    return true
+    return this.validateDefault(def.value, def)
   }
 
   /**
@@ -492,11 +533,19 @@ const Form = class {
    * [ Date, "hh:ii" ]
    * 
    * @param {object} def the field properties
-   * @returns {boolean}
+   * @returns {string|boolean}
    */
   validateTime(def) {
-    if (def.required || !isEmpty(def.value)) {
-      return isDate(def.value, def.min, def.max, false, def.format)
+    if (isEmpty(def.value)) {
+      if (def.required) {
+        return 'required'
+      }
+    } else if(!isDate(def.value, null, null, false, def.format)) {
+      return 'type'
+    } else if(def.min && !isDate(def.value, def.min, null, false, def.format)) {
+      return 'min'
+    } else if(def.max && !isDate(def.value, null, def.max, false, def.format)) {
+      return 'max'
     }
     return true
   }
@@ -520,11 +569,37 @@ const Form = class {
    * [ "http://domain.com", "", null ]
    * 
    * @param {object} def the field defintion
-   * @return {boolean}
+   * @returns {string|boolean}
    */
   validateUrl(def) {
-    if (def.required || !isEmpty(def.value)) {
-      return isUrl(def.value)
+    if (isEmpty(def.value)) {
+      if (def.required) {
+        return 'required'
+      }
+    } else if(!isUrl(def.value)) {
+      return 'type'
+    }
+    return true
+  }
+
+  /**
+   * Default validation for a string value
+   * [ "string", "", null ]
+   * 
+   * @param {object} def the field defintion
+   * @returns {string|boolean}
+   */
+  validateDefault(value, def) {
+    if (isEmpty(value)) {
+      if (def.required) {
+        return 'required'
+      }
+    } else if(!isStr(value)) {
+      return 'type'
+    } else if(def.minlength && !isStr(value, def.minlength)) {
+      return 'minlength'
+    } else if(def.maxlength && !isStr(value, null, def.maxlength)) {
+      return 'maxlength'
     }
     return true
   }
