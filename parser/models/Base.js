@@ -5,6 +5,8 @@ import { toStr } from '../../fn'
  */
 export function createBase() {
   return Object.create({ // create instance/copy, important!
+    $type: 'string',
+    $value: '',
     $val() {
       return this.$value
     },

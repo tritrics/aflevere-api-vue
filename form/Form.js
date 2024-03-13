@@ -1,5 +1,5 @@
-import { ref, computed, watchEffect, inject } from 'vue'
-import { createAction, subscribe, hasPlugin } from '../api'
+import { ref, computed, watchEffect } from 'vue'
+import { createAction } from '../api'
 import {
   each,
   has,
@@ -45,12 +45,12 @@ const Form = class {
   fields = ref({})
 
   /**
-   * Options
+   * Plugin-options
    */
   options = ref({})
 
   /**
-   * Flag to determine, wheather "error" property of each field is set or not
+   * Flag to determine, wheather error-property of each field is set or not
    */
   showErrors = ref(true)
 
@@ -83,7 +83,7 @@ const Form = class {
   }
 
   /**
-   * Setting options like action, locale
+   * Setting options
    * 
    * @param {object} options 
    * @return {void}
@@ -92,15 +92,16 @@ const Form = class {
     if (isObj(options)) {
       this.options.value = options
     }
-    if (!has(this.options.value, 'locale') && hasPlugin('i18n')) {
-      const i18n = inject('api.i18n')
-      this.options.value.locale = i18n.getLocale()
-    } else {
-      this.options.value.locale = 'en-US'
-    }
-    subscribe('on-changed-locale', (locale) => {
-      this.options.value.locale = locale
-    })
+    // locale - useful for date fields, but not used at the moment
+    // if (!has(this.options.value, 'locale') && hasPlugin('i18n')) {
+    //   const i18n = inject('api.i18n')
+    //   this.options.value.locale = i18n.getLocale()
+    // } else {
+    //   this.options.value.locale = 'en-US'
+    // }
+    // subscribe('on-changed-locale', (locale) => {
+    //   this.options.value.locale = locale
+    // })
   }
 
   /**
