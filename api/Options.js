@@ -1,5 +1,5 @@
 import { APIVERSION } from './index'
-import { each, has, trim, lower, isArr, isBool, isInt, isObj, isStr, toBool, upperFirst } from '../fn'
+import { each, has, toKey, lower, isArr, isBool, isInt, isObj, isStr, toBool, upperFirst } from '../fn'
 
 /**
  * Options for an API request
@@ -245,7 +245,7 @@ const Options = class {
    * @returns {string}
    */
   normalize(val) {
-    return trim(lower(val))
+    return toKey(val)
   }
 }
 

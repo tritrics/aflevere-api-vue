@@ -1,27 +1,7 @@
 import { each, has, isArr, isObj } from '../fn'
 import { subscribe } from '../api'
 import ParserOptions from './Options'
-import { createBoolean } from './models/Boolean'
-import { createBlock } from './models/Block'
-import { createColor } from './models/Color'
-import { createDate } from './models/Date'
-import { createDateTime } from './models/DateTime'
-import { createFile } from './models/File'
-import { createHtml } from './models/Html'
-import { createImage } from './models/Image'
-import { createInfo } from './models/Info'
-import { createLanguage } from './models/Language'
-import { createLanguages } from './models/Languages'
-import { createLink } from './models/Link'
-import { createMarkdown } from './models/Markdown'
-import { createPage } from './models/Page'
-import { createNumber } from './models/Number'
-import { createOption } from './models/Option'
-import { createSite } from './models/Site'
-import { createString } from './models/String'
-import { createText } from './models/Text'
-import { createTime } from './models/Time'
-import { createUser } from './models/User'
+import * as models from './models'
 
 /**
  * Instance of Options
@@ -109,58 +89,58 @@ function parseNodes(nodes) {
 function createModel(node) {
   switch(node.type) {
     case 'block':
-      return createBlock(createChildModels(node))
+      return models.createBlock(createChildModels(node))
     case 'boolean':
-      return createBoolean(node)
+      return models.createBoolean(node)
     case 'color':
-      return createColor(node)
+      return models.createColor(node)
     case 'date':
-      return createDate(node)
+      return models.createDate(node)
     case 'datetime':
-      return createDateTime(node)
+      return models.createDateTime(node)
     case 'email':
-      return createLink(node)
+      return models.createLink(node)
     case 'file':
-      return createFile(createChildModels(node))
+      return models.createFile(createChildModels(node))
     case 'html':
-      return createHtml(node)
+      return models.createHtml(node)
     case 'image':
-      return createImage(createChildModels(node))
+      return models.createImage(createChildModels(node))
     case 'info':
-      return createInfo(createChildModels(node))
+      return models.createInfo(createChildModels(node))
     case 'language':
-      return createLanguage(node)
+      return models.createLanguage(node)
     case 'languages':
-      return createLanguages(createChildModels(node))
+      return models.createLanguages(createChildModels(node))
     case 'link':
-      return createLink(node)
+      return models.createLink(node)
     case 'markdown':
-      return createMarkdown(node)
+      return models.createMarkdown(node)
     case 'page':
-      return createPage(createChildModels(node))
+      return models.createPage(createChildModels(node))
     case 'number':
-      return createNumber(node)
+      return models.createNumber(node)
     case 'option':
-      return createOption(node)
+      return models.createOption(node)
     case 'site':
-      return createSite(createChildModels(node))
+      return models.createSite(createChildModels(node))
     case 'tel':
-      return createLink(node)
+      return models.createLink(node)
     case 'text':
-      return createText(node)
+      return models.createText(node)
     case 'time':
-      return createTime(node)
+      return models.createTime(node)
     case 'url':
-      return createLink(node)
+      return models.createLink(node)
     case 'user':
-      return createUser(createChildModels(node))
+      return models.createUser(createChildModels(node))
     default:
       
       // also files, object, pages, structure, users, options
       if (isArr(node.value) || isObj(node.value)) {
         return parseNodes(node.value)
       } else {
-        return createString(node) 
+        return models.createString(node) 
       }
   }
 }

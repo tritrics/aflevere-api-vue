@@ -1,8 +1,5 @@
 import { extend } from '../../fn'
-import { createThumb } from './Thumb.js'
-import { createFile } from './File.js'
-
-
+import { createThumb, createFile } from './index'
 
 /**
  * Model for API field: image
@@ -10,7 +7,7 @@ import { createFile } from './File.js'
  * @param {object} obj the field data
  * @returns {object}
  */
-export function createImage(obj) {
+export default function createImage(obj) {
   const field = createFile(obj)
   
   const ext = {

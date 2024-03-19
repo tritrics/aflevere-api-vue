@@ -1,6 +1,6 @@
 import { has, each, isArr, inArr, isStr, toBool, extend, objToAttr } from '../../fn'
-import { createBase } from './Base'
 import { getOption } from '../index'
+import { createBase } from './index'
 import { getLinkAttributes } from './Link'
 
 /**
@@ -14,7 +14,7 @@ const selfClosing = ['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input',
  * @param {object} obj 
  * @returns {object}
  */
-export function createHtmlNode(obj) {
+export default function createHtmlNode(obj) {
   const functions = {
     $isSelfClosing() {
       return has(this, '$element') && inArr(this.$element, selfClosing)

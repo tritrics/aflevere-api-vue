@@ -3,7 +3,7 @@ import { toStr } from '../../fn'
 /**
  * Base object for all models
  */
-export function createBase() {
+export default function createBase() {
   return Object.create({ // create instance/copy, important!
     $type: 'string',
     $value: '',

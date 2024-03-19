@@ -1,5 +1,5 @@
 import { has, each, isStr, extend } from '../../fn'
-import { createBase } from './Base'
+import { createBase } from './index'
 
 /**
  * Model for API field: languages
@@ -7,7 +7,7 @@ import { createBase } from './Base'
  * @param {object} obj the field data
  * @returns {object}
  */
-export function createLanguages(obj) {
+export default function createLanguages(obj) {
   const functions = {
     $has(code) {
       return isStr(code) && has(this.$value, code)

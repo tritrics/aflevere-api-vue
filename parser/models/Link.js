@@ -1,6 +1,6 @@
 import { objToAttr, extend, toBool, isStr } from '../../fn'
-import { createBase } from './Base'
 import { getOption } from '../index'
+import { createBase } from './index'
 
 /**
  * Helper function to get link attributes.
@@ -33,7 +33,7 @@ export function getLinkAttributes(element, attributes, asString, options) {
  * @param {object} obj the field data
  * @returns {object}
  */
-export function createLink(obj) {
+export default function createLink(obj) {
   const functions = {
 
     // analog to HtmlNode

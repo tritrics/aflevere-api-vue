@@ -1,5 +1,5 @@
 import { extend, toBool } from '../../fn'
-import { createBase } from './Base'
+import { createBase } from './index'
 
 /**
  * Model for API field: color
@@ -7,7 +7,7 @@ import { createBase } from './Base'
  * @param {object} obj the field data
  * @returns {object}
  */
-export function createColor(obj) {
+export default function createColor(obj) {
   const functions = {}
   
   const data = {

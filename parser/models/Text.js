@@ -1,6 +1,6 @@
 import { extend } from '../../fn'
-import { createString } from './String.js'
 import { getOption } from '../index'
+import { createString } from './index'
 
 /**
  * Model for API field: text
@@ -8,7 +8,7 @@ import { getOption } from '../index'
  * @param {object} obj the field data
  * @returns {object}
  */
-export function createText(obj) {
+export default function createText(obj) {
   const field = createString(obj)
   
   const ext = {

@@ -1,24 +1,22 @@
-import { extend, isTrue, isBool } from '../../fn'
-import { createBase } from './Base'
+import { extend, has, isTrue, isBool } from '../../fn'
+import { createBase } from './index'
 
-export function createBoolean(def) {
+export default function createBoolean(def) {
   const inject = {
     type: 'boolean',
     value: has(def, 'value') && isTrue(def.value, false) ? true : false,
     required: has(def, 'required') && isTrue(def.required) ? true : false,
     validate() {
       if (this.required && !isTrue(this.value, false)) {
-        return 'required'
+        return this.setValid('required')
       } else if (!isBool(this.value, false)) {
-        return 'type'
+        return this.setValid('type')
       }
-      return true
+      return this.setValid()
     },
-    data() {},
-    toString() {},
+    data() {
+      return isTrue(this.value, false) ? 1 : 0
+    },
   }
-
-  const obj = extend(createBase(), inject)
-  obj.watchStart()
-  return obj
+  return extend(createBase(), inject)
 }

@@ -1,41 +1,40 @@
-import { computed, watchEffect } from 'vue'
-import { toStr } from '../../fn'
+import { watchEffect } from 'vue'
+import { toStr, isEmpty, uuid } from '../../fn'
 
 /**
  * Base object for all fields
  */
-export function createBase() {
+export default function createBase() {
   return Object.create({
     type: 'string',
+    id: uuid(),
     value: '',
     required: false,
     valid: true,
     msg: '',
-    showError: false,
-    error: computed(() => {
-      !this.valid && this.showError
-    }),
     validate() {},
-    watchStart() {
-      this.watchStop = watchEffect(() => {
-        this.validate(this.value) // important to kick off the watchEffect
-      })
+    setValid(msg = '') {
+      this.valid = isEmpty(msg)
+      this.msg = msg
     },
-    watchStop: () => {},
-    setValid(msg = true) {
-      if (msg === true) {
-        this.msg = ''
-        this.valid = true
-      } else {
-        this.msg = msg
-        this.valid = false
+    watch(start = true) {
+      if (start) {
+        if(this._watchStopFn === null) {
+          this._watchStopFn = watchEffect(() => {
+            this.validate(this.value) // important to kick off the watchEffect
+          })
+        }
+      } else if (this._watchStopFn !== null) {
+        this._watchStopFn()
+        this._watchStopFn = null
       }
     },
     data() {
-      return this.toString()
-    },
-    toString() {
       return toStr(this.value)
     },
+    toString() {
+      return toStr(this.data())
+    },
+    _watchStopFn: null,
   })
 }

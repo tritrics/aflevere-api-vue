@@ -1,6 +1,6 @@
 import { extend, now } from '../../fn'
 import { getOption } from '../index'
-import { createBase } from './Base'
+import { createBase } from './index'
 
 /**
  * Model for API field: time
@@ -8,7 +8,7 @@ import { createBase } from './Base'
  * @param {object} obj the field data
  * @returns {object}
  */
-export function createTime(obj) {
+export default function createTime(obj) {
   const functions = {
     $isOver() {
       return now(this.$value) > this.$value

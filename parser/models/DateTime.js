@@ -1,6 +1,6 @@
 import { extend, now, today } from '../../fn'
 import { getOption } from '../index'
-import { createBase } from './Base'
+import { createBase } from './index'
 
 /**
  * Model for API field: datetime
@@ -8,7 +8,7 @@ import { createBase } from './Base'
  * @param {object} obj the field data
  * @returns {object}
  */
-export function createDateTime(obj) {
+export default function createDateTime(obj) {
   const functions = {
     $isPast(includeToday = false) {
       return includeToday ? today() >= this.$value : today() > this.$value

@@ -1,6 +1,10 @@
-import { extend } from '../../fn'
-import { createBase } from './Base'
+import { isStr, isEmpty, extend } from '../../fn'
+import { createString } from './index'
 
-export function createText(def) {
-  // extend String with multiple = false
+export default function createText(def) {
+  const inject = {
+    type: 'text',
+    linebreaks: true,
+  }
+  return extend(createString(def), inject)
 }

@@ -11,7 +11,7 @@ function createUserForm(fields, options = {}) {
   return {
     fields: form.fields,
     valid: form.valid,
-    validate: () => form.validate(),
+    validate: (immediate) => form.validate(immediate),
     data: () => form.data(),
     submit: async () => await form.submit(),
     reset: () =>form.reset(),

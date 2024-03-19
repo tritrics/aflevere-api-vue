@@ -1,5 +1,5 @@
 import { has, extend } from '../../fn'
-import { createBase } from './Base'
+import { createBase } from './index'
 
 /**
  * Model for API field: block
@@ -7,7 +7,7 @@ import { createBase } from './Base'
  * @param {object} obj the field data
  * @returns {object}
  */
-export function createBlock(obj) {
+export default function createBlock(obj) {
   const functions = {
     $val() {
       return this.$meta.id

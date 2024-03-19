@@ -1,6 +1,5 @@
 import { has, each, extend, isArr } from '../../fn'
-import { createBase } from './Base'
-import { createHtmlNode } from './HtmlNode'
+import { createBase, createHtmlNode } from './index'
 
 /**
  * Recoursive function to create HtmlNodes from html field value.
@@ -25,7 +24,7 @@ function createNodes(nodes) {
  * @param {object} obj the field data
  * @returns {object}
  */
-export function createHtml(obj) {
+export default function createHtml(obj) {
   const functions = {
 
     // unlike in Node, the functions $tag() and $str() both return the same,

@@ -1,6 +1,5 @@
 import { has, extend } from '../../fn'
-import { createBase } from './Base'
-import { createString } from './String'
+import { createBase, createString } from './index'
 
 /**
  * Model for API field: option
@@ -8,7 +7,7 @@ import { createString } from './String'
  * @param {object} obj the field data
  * @returns {object}
  */
-export function createOption(obj) {
+export default function createOption(obj) {
   const functions = {}
   
   const data = {

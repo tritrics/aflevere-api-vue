@@ -1,4 +1,4 @@
-import {toStr} from '../index'
+import { toStr } from '../index'
 
 /**
  * Converts first character of a string to uppercase and the rest to lower.

@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import { each, trim, lower, has, clone, toBool, isStr } from '../fn'
+import { each, toKey, has, clone, toBool, isStr } from '../fn'
 import { getInfo, getLanguage as getLanguageRequest, publish, parse } from '../api'
 
 /**
@@ -148,7 +148,7 @@ export function detectLanguage(getUser = true, getDefault = true) {
  */
 export async function setLanguage(lang) {
   if (isMultilang()) {
-    let res = lower(trim(lang))
+    let res = toKey(lang)
     if (isValidLanguage(res) && (res !== data.value.current)) {
       await requestLanguage(lang)
     }

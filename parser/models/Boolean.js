@@ -1,5 +1,5 @@
 import { toBool, extend } from '../../fn'
-import { createBase } from './Base'
+import { createBase } from './index'
 
 /**
  * Model for API field: boolean
@@ -7,7 +7,7 @@ import { createBase } from './Base'
  * @param {object} obj the field data
  * @returns {object}
  */
-export function createBoolean(obj) {
+export default function createBoolean(obj) {
   const functions = {
     $is(prop) {
       return this.$value === toBool(prop)

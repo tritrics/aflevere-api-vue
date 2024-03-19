@@ -1,15 +1,21 @@
-import { extend } from '../../fn'
-import { createBase } from './Base'
+import { extend, has, isEmpty, isUrl, toStr, isTrue } from '../../fn'
+import { createBase } from './index'
 
-export function createUrl(def) {
+export default function createUrl(def) {
   const inject = {
-    type: 'url',
-    value: def.value,
+    type: 'email',
+    value: has(def, 'value') ? toStr(def.value) : '',
+    required: has(def, 'required') && isTrue(def.required) ? true : false,
     validate() {
+      if (isEmpty(this.value)) {
+        if (this.required) {
+          return this.setValid('required')
+        }
+      } else if(!isUrl(this.value)) {
+        return this.setValid('type')
+      }
+      return this.setValid()
     },
   }
-
-  const obj = extend(createBase(), inject)
-  obj.watchStart()
-  return obj
+  return extend(createBase(), inject)
 }

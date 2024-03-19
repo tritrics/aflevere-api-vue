@@ -1,6 +1,6 @@
 import { toNum, isInt, extend } from '../../fn'
 import { getOption } from '../index'
-import { createBase } from './Base'
+import { createBase } from './index'
 
 /**
  * Model for API field: number
@@ -8,7 +8,7 @@ import { createBase } from './Base'
  * @param {object} obj the field data
  * @returns {object}
  */
-export function createNumber(obj) {
+export default function createNumber(obj) {
   const functions = {
     $isMin(min) {
       return isNum(this.$value, min, null, true)

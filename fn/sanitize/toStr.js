@@ -4,6 +4,6 @@
  * @param {mixed} val 
  * @returns {string}
  */
-export default function toStr(val) {
+export default function toStr(val, stripLinebreaks = false) {
   return typeof val === 'object' ? '' : `${val}`
 }

@@ -1,17 +1,30 @@
-import { extend } from '../../fn'
-import { createBase } from './Base'
+import { extend, has, toStr, isTrue, isNum, toNum, isEmpty} from '../../fn'
+import { createBase } from './index'
 
-export function createNumber(def) {
+export default function createNumber(def) {
   const inject = {
     type: 'number',
-    value: def.value,
+    value: has(def, 'value') ? toStr(def.value) : '',
+    required: has(def, 'required') && isTrue(def.required) ? true : false,
+    min: has(def, 'min') && isNum(def.min, 1, null, false) ? toNum(def.min) : null,
+    max: has(def, 'max') && isNum(def.max, 1, null, false) ? toNum(def.max) : null,
     validate() {
+      if (isEmpty(this.value)) {
+        if (this.required) {
+          return this.setValid('required')
+        }
+      } else if(!isNum(this.value, null, null, false)) {
+        return this.setValid('type')
+      } else if(this.min && !isNum(this.value, this.min, null, false)) {
+        return this.setValid('min')
+      } else if(this.max && !isNum(this.value, null, this.max, false)) {
+        return this.setValid('max')
+      }
+      return this.setValid()
     },
-    data() {},
-    toString() {},
+    data() {
+      return toNum(this.value)
+    }
   }
-
-  const obj = extend(createBase(), inject)
-  obj.watchStart()
-  return obj
+  return extend(createBase(), inject)
 }

@@ -1,5 +1,4 @@
-import {toStr} from '../index'
-import {isInt} from '../index'
+import { toStr, isInt } from '../index'
 
 /**
  * Cuts the string to the given length and adds ... to the end.

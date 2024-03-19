@@ -4,7 +4,6 @@
  * @param {mixed} val 
  * @returns {boolean}
  */
-export default function isObj(val) { // experimental
-  const check = Object.prototype.toString.call(val).toLowerCase()
-  return check === '[object object]' || check === '[object arguments]'
+export default function isObj(val) {
+  return /^\[object (object|arguments|module)\]$/.test(Object.prototype.toString.call(val).toLowerCase())
 }

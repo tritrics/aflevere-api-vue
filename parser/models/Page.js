@@ -1,6 +1,5 @@
 import { has, each, isStr, extend, toBool } from '../../fn'
-import { createBase } from './Base'
-import { createLink } from './Link'
+import { createBase, createLink } from './index'
 
 /**
  * Model for API field: page
@@ -8,7 +7,7 @@ import { createLink } from './Link'
  * @param {object} obj the field data
  * @returns {object}
  */
-export function createPage(obj) {
+export default function createPage(obj) {
   const functions = {
     $val() {
       return this.$meta.slug

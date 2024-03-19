@@ -1,5 +1,5 @@
 import { has, toBool, isStr, extend } from '../../fn'
-import { createBase } from './Base'
+import { createBase } from './index'
 
 /**
  * Model for API field: info
@@ -7,7 +7,7 @@ import { createBase } from './Base'
  * @param {object} obj the field data
  * @returns {object}
  */
-export function createInfo(obj) {
+export default function createInfo(obj) {
   const functions = {
     $val() {
       return this.$meta.slug

@@ -1,5 +1,5 @@
 import { extend } from '../../fn'
-import { createString } from './String.js'
+import { createString } from './index'
 
 /**
  * Model for API field: markdown
@@ -7,7 +7,7 @@ import { createString } from './String.js'
  * @param {object} obj the field data
  * @returns {object}
  */
-export function createMarkdown(obj) {
+export default function createMarkdown(obj) {
   const field = createString(obj)
   
   const ext = {

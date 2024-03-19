@@ -10,7 +10,7 @@ import Thumb from '../../api/Thumb'
  * @param {object} options
  * @returns {object}
  */
-export function createThumb(obj, width = null, height = null, options = {}) {
+export default function createThumb(obj, width = null, height = null, options = {}) {
   const functions = {
     // Option-Functions are chainable
     $dim() {
