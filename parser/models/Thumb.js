@@ -1,5 +1,5 @@
 import { extend } from '../../fn'
-import Thumb from '../../images/Thumb'
+import { createThumb as createThumbInstance } from '../../images'
 
 /**
  * Model for thumb, used by model Image
@@ -56,7 +56,7 @@ export default function createThumb(obj, width = null, height = null, options = 
   
   const data = {
     $type: 'thumb',
-    $value: new Thumb(obj, width, height, options),
+    $value: createThumbInstance(obj, width, height, options),
   }
   return extend(functions, data)
 }
