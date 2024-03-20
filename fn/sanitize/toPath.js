@@ -13,7 +13,7 @@ export default function toPath(...args) {
     if(isNum(arg)) {
       arg = toStr(arg)
     } else if (isStr(arg)) {
-      arg = trim(arg, '/')
+      arg = trim(arg, true, true, '/')
     }
     if (isStr(arg, 1)) {
       res.push(encodeURI(arg))

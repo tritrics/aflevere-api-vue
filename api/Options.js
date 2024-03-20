@@ -1,5 +1,5 @@
 import { APIVERSION } from './index'
-import { each, has, toKey, lower, isArr, isBool, isInt, isObj, isStr, toBool, upperFirst } from '../fn'
+import { each, has, toKey, lower, isArr, isBool, isInt, isObj, isStr, toBool, toInt, upperFirst } from '../fn'
 
 /**
  * Options for an API request
@@ -9,12 +9,12 @@ const Options = class {
   /**
    * Default options
    */
-  #params = {
+  params = {
     host: null,
     lang:  null,
     fields: [],
     limit: 10,
-    page: 1,
+    set: 1,
     order: 'asc',
     raw: false,
     multilang: true, // multilang is only set to false by i18n-plugin
@@ -37,7 +37,7 @@ const Options = class {
   clone(params, reset = false) {
     const clone = new Options()
     if (!reset) {
-      clone.set(structuredClone(this.#params))
+      clone.set(structuredClone(this.params))
     }
     clone.set(params)
     return clone
@@ -54,7 +54,7 @@ const Options = class {
    * @returns {string}
    */
   getHost() {
-    return this.#params.host
+    return this.params.host
   }
 
   /**
@@ -64,45 +64,45 @@ const Options = class {
    * @returns {string}
    */
   getLang(lang = null) {
-    if (!this.#params.multilang) {
+    if (!this.params.multilang) {
       return null
     }
-    return isStr(lang, 1) ? lang : this.#params.lang
+    return isStr(lang, 1) ? lang : this.params.lang
   }
 
   /**
    * @returns {string|array} can be an array of fields or `all`
    */
   getFields() {
-    return this.#params.fields
+    return this.params.fields
   }
 
   /**
    * @returns {integer}
    */
   getLimit() {
-    return this.#params.limit
+    return this.params.limit
   }
 
   /**
    * @returns {integer}
    */
-  getPage() {
-    return this.#params.page
+  getSet() {
+    return this.params.set
   }
 
   /**
    * @returns {string}
    */
   getOrder() {
-    return this.#params.order
+    return this.params.order
   }
 
   /**
    * @returns {boolean}
    */
   getRaw() {
-    return this.#params.raw
+    return this.params.raw
   }
 
   /**
@@ -114,7 +114,7 @@ const Options = class {
     if (!isObj(options)) {
       return
     }
-    each(this.#params, (val, prop) => {
+    each(this.params, (val, prop) => {
       if (has(options, prop)) {
         const setter = `set${upperFirst(prop)}`
         this[setter](options[prop])
@@ -135,7 +135,7 @@ const Options = class {
       if (host.endsWith('/')) {
         host = host.substring(0, host.length - 1)
       }
-      this.#params.host = host
+      this.params.host = host
     }
   }
 
@@ -147,9 +147,9 @@ const Options = class {
    */
   setLang(lang) {
     if (isStr(lang)) {
-      this.#params.lang = this.normalize(lang)
+      this.params.lang = this.normalize(lang)
     } else {
-      this.#params.lang = null
+      this.params.lang = null
     }
   }
 
@@ -167,7 +167,7 @@ const Options = class {
     let fields = []
     if (val.length === 1) {
       if (toBool(val[0]) === true || val[0] === 'all') {
-        this.#params.fields = 'all'
+        this.params.fields = 'all'
         return
       } else if (isArr(val[0])) {
         fields = val[0]
@@ -178,7 +178,7 @@ const Options = class {
       fields = val
     }
     fields = fields.filter((field) => isStr(field, 1))
-    this.#params.fields = fields.map((field) => lower(field))
+    this.params.fields = fields.map((field) => lower(field))
   }
 
   /**
@@ -188,8 +188,8 @@ const Options = class {
    * @param {integer} limit positive value, default 10
    */
   setLimit(limit) {
-    if (isInt(limit, 1)) {
-      this.#params.limit = limit
+    if (isInt(limit, 1, null, false)) {
+      this.params.limit = toInt(limit)
     }
   }
 
@@ -199,9 +199,9 @@ const Options = class {
    * 
    * @param {integer} pageno positive value, default 1
    */
-  setPage(pageno) {
-    if (isInt(pageno, 1)) {
-      this.#params.page = pageno
+  setSet(no) {
+    if (isInt(no, 1, null, false)) {
+      this.params.set = toInt(no)
     }
   }
 
@@ -215,7 +215,7 @@ const Options = class {
     if (isStr(order)) {
       order = this.normalize(order)
       if (order === 'asc' || order === 'desc') {
-        this.#params.order = order
+        this.params.order = order
       }
     }
   }
@@ -227,7 +227,7 @@ const Options = class {
    * @param {boolean} returnRaw 
    */
   setRaw(raw) {
-    this.#params.raw = isBool(raw) ? raw : false
+    this.params.raw = isBool(raw) ? raw : false
   }
 
   /**
@@ -237,7 +237,7 @@ const Options = class {
    * @param {boolean} isMultilang 
    */
   setMultilang(isMultilang) {
-    this.#params.multilang = toBool(isMultilang)
+    this.params.multilang = toBool(isMultilang)
   }
 
   /**

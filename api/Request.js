@@ -80,8 +80,8 @@ const Request = class {
    * @returns {this}
    * @see Options
    */
-  page(pageno) {
-    this.Options.setPage(pageno)
+  set(no) {
+    this.Options.setSet(no)
     return this
   }
 
@@ -172,7 +172,7 @@ const Request = class {
       path
     )
     const data = {
-      page: this.Options.getPage(),
+      set: this.Options.getSet(),
       limit: this.Options.getLimit(),
       order: this.Options.getOrder(),
       fields: this.Options.getFields(),
@@ -260,7 +260,6 @@ const Request = class {
     if (isObj(data)) {
       if (method === 'GET') {
         url = `${url}${objToParam(data)}`
-        console.log(url)
       } else {
         options.headers = { 'content-type': 'application/json' }
         options.body = JSON.stringify(data)

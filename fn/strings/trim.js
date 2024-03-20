@@ -13,12 +13,12 @@ import { isStr, regEsc } from '../index'
  * @param {string} val 
  * @param {boolean} left trim at left
  * @param {boolean} right trim at right
- * @param {string} chars characters to trim
+ * @param {string} chars additional (!) characters to trim
  * @returns {string}
  */
-export default function trim(val, left = true, right = true, chars = null) {
+export default function trim(val, left = true, right = true, chars = '') {
   if (isStr(val)) {
-    const search = isStr(chars) ? regEsc(chars) : ' \r\n\t\0\v' // why \s not working?
+    const search = regEsc(` \r\n\t\0\v${chars}`)
     const reg = []
     if (left) reg.push(`^[${search}]+`)
     if (right) reg.push(`[${search}]+$`)
