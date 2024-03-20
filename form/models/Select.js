@@ -34,7 +34,7 @@ export default function createSelect(def) {
       if (this.multiple) {
         return this.value.map(entry => toStr(entry))
       } else {
-        return toStr(def.value)
+        return toStr(this.value)
       }
     },
     toString() {
