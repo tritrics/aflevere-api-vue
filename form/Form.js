@@ -47,7 +47,7 @@ const Form = class {
    * @param {object} options
    * @param {fields} fields field definitions, otherwise taken from action
    */
-  constructor(options, fields) {
+  constructor(options = {}, fields = null) {
     this.setOptions(options)
     if(isObj(fields)) {
       this.defs = fields
@@ -77,16 +77,6 @@ const Form = class {
         this.options.value.immediate = toBool(options.immediate)
       }
     }
-    // locale - useful for date fields, but not used at the moment
-    // if (!has(this.options.value, 'locale') && hasPlugin('i18n')) {
-    //   const i18n = inject('api.i18n')
-    //   this.options.value.locale = i18n.getLocale()
-    // } else {
-    //   this.options.value.locale = 'en-US'
-    // }
-    // subscribe('on-changed-locale', (locale) => {
-    //   this.options.value.locale = locale
-    // })
   }
 
   /**

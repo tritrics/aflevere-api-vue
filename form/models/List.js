@@ -2,6 +2,13 @@ import { watchEffect } from 'vue'
 import { extend, has, each, unset, isTrue, isInt, isArr, toInt, isEmpty } from '../../fn'
 import { createBase, createString } from './index'
 
+/**
+ * List field
+ * Kirby: Tags
+ * 
+ * @param {object} def 
+ * @returns 
+ */
 export default function createList(def) {
   const inject = {
     type: 'list',

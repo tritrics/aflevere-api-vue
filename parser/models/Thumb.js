@@ -1,5 +1,5 @@
 import { extend } from '../../fn'
-import Thumb from '../../api/Thumb'
+import Thumb from '../../images/Thumb'
 
 /**
  * Model for thumb, used by model Image

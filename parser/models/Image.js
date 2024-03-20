@@ -1,5 +1,5 @@
 import { extend } from '../../fn'
-import { createThumb, createFile } from './index'
+import { createFile, createThumb } from './index'
 
 /**
  * Model for API field: image

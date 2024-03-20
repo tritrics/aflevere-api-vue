@@ -1,5 +1,5 @@
 import { isObj, toPath, isUrl, upper, objToParam } from '../fn'
-import { parse } from './index'
+import { parse } from '../plugins'
 
 /**
  * Class to handle a single request

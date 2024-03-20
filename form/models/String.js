@@ -1,6 +1,13 @@
 import { has, isTrue, isInt, isStr, toInt, toStr, isEmpty, extend } from '../../fn'
 import { createBase } from './index'
 
+/**
+ * String field (single line, no breaks)
+ * Kirby: Color, Slug, Text
+ * 
+ * @param {object} def 
+ * @returns 
+ */
 export default function createString(def, parent = {}) {
   const inject = {
     type: 'string',

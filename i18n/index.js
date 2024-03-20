@@ -1,6 +1,7 @@
 import { ref } from 'vue'
 import { each, toKey, has, clone, toBool, isStr } from '../fn'
-import { getInfo, getLanguage as getLanguageRequest, publish, parse } from '../api'
+import { getInfo, getLanguage as getLanguageRequest } from '../api'
+import { parse, publish } from '../plugins'
 
 /**
  * list of languages like returned from getInfo()

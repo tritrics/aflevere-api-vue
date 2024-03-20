@@ -1,6 +1,13 @@
 import { extend, has, isTrue, isBool } from '../../fn'
 import { createBase } from './index'
 
+/**
+ * Boolean field
+ * Kirby: Toggle
+ * 
+ * @param {object} def 
+ * @returns 
+ */
 export default function createBoolean(def) {
   const inject = {
     type: 'boolean',

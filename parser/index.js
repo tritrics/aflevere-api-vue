@@ -1,5 +1,5 @@
 import { each, has, isArr, isObj } from '../fn'
-import { subscribe } from '../api'
+import { subscribe } from '../plugins'
 import ParserOptions from './Options'
 import * as models from './models'
 

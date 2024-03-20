@@ -1,13 +1,14 @@
 import Form from './Form'
 
 /**
- * Alpha-version
- * Missing:
- * - get validation defintions from Kirby (optional)
+ * Factory to create a new form, returns the interface.
+ * 
+ * @param {*} options 
+ * @param {*} fields 
+ * @returns 
  */
-
-function createUserForm(fields, options = {}) {
-  const form = new Form(fields, options)
+function createUserForm(options = {}, fields = null) {
+  const form = new Form(options, fields)
   return {
     fields: form.fields,
     valid: form.valid,

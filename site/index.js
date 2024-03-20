@@ -1,5 +1,6 @@
 import { ref } from 'vue'
-import { getPage, parse, publish, subscribe } from '../api'
+import { getPage } from '../api'
+import { parse, publish, subscribe } from '../plugins'
 
 /**
  * original response data, parsed or not
@@ -22,7 +23,7 @@ async function requestSite() {
  */
 export function getData() {
   return data.value
-} 
+}
 
 /**
  * Plugin

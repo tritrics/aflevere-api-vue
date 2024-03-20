@@ -1,6 +1,13 @@
 import { extend, has, isEmpty, isEmail, toStr, isTrue } from '../../fn'
 import { createBase } from './index'
 
+/**
+ * Email field
+ * Kirby: Email
+ * 
+ * @param {object} def 
+ * @returns 
+ */
 export default function createEmail(def) {
   const inject = {
     type: 'email',

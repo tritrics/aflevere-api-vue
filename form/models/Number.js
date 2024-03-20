@@ -1,6 +1,13 @@
 import { extend, has, toStr, isTrue, isNum, toNum, isEmpty} from '../../fn'
 import { createBase } from './index'
 
+/**
+ * Number field
+ * Kirby: Number
+ * 
+ * @param {object} def 
+ * @returns 
+ */
 export default function createNumber(def) {
   const inject = {
     type: 'number',

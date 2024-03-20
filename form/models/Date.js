@@ -1,6 +1,13 @@
 import { extend, has, toStr, isTrue, isStr, dateRegExp, isEmpty, isDate, toDate, dateToStr } from '../../fn'
 import { createBase } from './index'
 
+/**
+ * Date field, optional with time
+ * Kirby: Date
+ * 
+ * @param {object} def 
+ * @returns 
+ */
 export default function createDate(def) {
   const inject = {
     type: 'date',

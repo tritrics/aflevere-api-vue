@@ -1,6 +1,13 @@
 import { extend, has, isTrue, isInt, toInt, isArr, toStr, isEmpty, inArr } from '../../fn'
 import { createBase } from './index'
 
+/**
+ * Select/Multiselect field
+ * Kirby: Checkboxes, Multiselect, Radio, Select, Toggles
+ * 
+ * @param {object} def 
+ * @returns 
+ */
 export default function createSelect(def) {
   const inject = {
     type: 'select',
