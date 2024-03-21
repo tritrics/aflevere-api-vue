@@ -222,8 +222,7 @@ export function createI18n(params) {
     name: 'i18n',
     init: async () => {
       await requestLanguages()
-      const detected = detectLanguage()
-      await setLanguage(detected)
+      await setLanguage(detectLanguage())
     },
     export: {
       detectLanguage,

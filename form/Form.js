@@ -44,6 +44,11 @@ const Form = class {
   })
 
   /**
+   * Flat, true while waiting for answer from API
+   */
+  processing = ref(false)
+
+  /**
    * @param {object} options
    * @param {fields} fields field definitions, otherwise taken from action
    */
@@ -97,6 +102,7 @@ const Form = class {
   initForm() {
     this.fields.value = {}
     this.onInput.value = this.options.value.immediate
+    this.processing.value = false
     each(this.defs, (def, key) => {
       const factory = camelCase('create', toKey(def.type))
       if (has(models, factory)) {
@@ -152,7 +158,10 @@ const Form = class {
       if (has(this.options.value, 'lang') && isStr(this.options.value.lang, 1)) {
         options.lang = this.options.value.lang
       }
-      return await createAction(this.options.value.action, this.data(), options)
+      this.processing.value = true
+      const res = await createAction(this.options.value.action, this.data(), options)
+      this.processing.value = false
+      return res
     }
   }
 
